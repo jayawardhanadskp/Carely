@@ -1,23 +1,28 @@
+import 'package:carely/features/service_seeker/screens/bookings_screen_ss.dart';
+import 'package:carely/features/service_seeker/screens/home_screen_ss.dart';
+import 'package:carely/features/service_seeker/screens/profile_scree_ss.dart';
 import 'package:carely/features/service_seeker/widgets/bottom_nav_bar_ss.dart';
 import 'package:flutter/material.dart';
 
-class MainScreen extends StatefulWidget {
+class MainScreenSs extends StatefulWidget {
+  const MainScreenSs({super.key});
+
   @override
-  _MainScreenState createState() => _MainScreenState();
+  MainScreenSsState createState() => MainScreenSsState();
 }
 
-class _MainScreenState extends State<MainScreen> {
+class MainScreenSsState extends State<MainScreenSs> {
   int _currentIndex = 0;
   
   final List<Widget> _screens = [
-    // HomeScreen(),
-    // BookingsScreen(),
+    
+    
     // ChatScreen(),
     // ProfileScreen(),
-    Center(child: Text('Home Screen')),
-    Center(child: Text('Bookings Screen')),
+    HomeScreenSs(),
+    BookingsScreenSs(),
     Center(child: Text('Chat Screen')),
-    Center(child: Text('Profile Screen')),
+    ProfileScreen()
   ];
 
   void _onTabTapped(int index) {
