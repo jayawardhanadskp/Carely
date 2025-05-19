@@ -1,5 +1,6 @@
-import 'package:carely/features/service_seeker/screens/main_screen_ss.dart';
 import 'package:carely/firebase_options.dart';
+import 'package:carely/routes/app_routes.dart';
+import 'package:carely/theme/app_theme.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
@@ -17,11 +18,11 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-      ),
-      home: MainScreen()
+      title: 'Carely',
+      debugShowCheckedModeBanner: false,
+      theme: AppTheme.lightTheme,
+       initialRoute: '/caregiver/register', // '/seeker/main',
+      onGenerateRoute: AppRouter.generateRoute,
     );
   }
 }
