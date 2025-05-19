@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "520239783476",
+    "project_id": "carely-d1d6b",
+    "storage_bucket": "carely-d1d6b.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:520239783476:android:02bb91bca5b480a7a17461",
+        "android_client_info": {
+          "package_name": "com.carely.carely"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD89CYXy0ots3ekee0gSCVhaLcKa82v1DI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
