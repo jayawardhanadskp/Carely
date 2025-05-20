@@ -1,3 +1,4 @@
+import 'package:carely/features/service_seeker/screens/all_caregivers_ss.dart';
 import 'package:carely/features/service_seeker/screens/bookings_screen_ss.dart';
 import 'package:carely/features/service_seeker/screens/home_screen_ss.dart';
 import 'package:carely/features/service_seeker/screens/profile_scree_ss.dart';
@@ -15,13 +16,9 @@ class MainScreenSsState extends State<MainScreenSs> {
   int _currentIndex = 0;
   
   final List<Widget> _screens = [
-    
-    
-    // ChatScreen(),
-    // ProfileScreen(),
     HomeScreenSs(),
     BookingsScreenSs(),
-    Center(child: Text('Chat Screen')),
+    AllCaregiversListScreenSs(),
     ProfileScreen()
   ];
 
