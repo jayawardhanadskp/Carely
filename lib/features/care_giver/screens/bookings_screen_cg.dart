@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:carely/models/booking_model.dart';
 import 'package:carely/providers/booking_provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -431,23 +433,23 @@ class _BookingsScreenCgState extends State<BookingsScreenCg> {
               ),
             ],
           ),
-          if (note != null) ...[
-            const SizedBox(height: 12),
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: Colors.grey[50],
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Text(
-                '"$note"',
-                style: TextStyle(
-                  color: Colors.grey[700],
-                  fontStyle: FontStyle.italic,
-                ),
+          ...[
+          const SizedBox(height: 12),
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: Colors.grey[50],
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Text(
+              '"$note"',
+              style: TextStyle(
+                color: Colors.grey[700],
+                fontStyle: FontStyle.italic,
               ),
             ),
-          ],
+          ),
+        ],
           const SizedBox(height: 16),
           Row(
             children: [

@@ -1,3 +1,5 @@
+// ignore_for_file: library_private_types_in_public_api
+
 import 'package:carely/models/booking_model.dart';
 import 'package:carely/models/caregiver_model.dart';
 import 'package:carely/features/service_seeker/widgets/booking_card_widget_ss.dart';
@@ -8,6 +10,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class BookingsScreenSs extends StatefulWidget {
+  const BookingsScreenSs({super.key});
+
   @override
   _BookingsScreenSsState createState() => _BookingsScreenSsState();
 }
@@ -161,8 +165,8 @@ class _BookingsScreenSsState extends State<BookingsScreenSs>
       if (doc.exists) {
         return CaregiverProfile.fromMap(doc.data()!);
       }
+    // ignore: empty_catches
     } catch (e) {
-      print("Error fetching caregiver profile: $e");
     }
     return null;
   }

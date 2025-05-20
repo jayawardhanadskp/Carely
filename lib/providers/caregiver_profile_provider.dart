@@ -30,7 +30,7 @@ class CaregiverProfileProvider with ChangeNotifier {
         }
       }
     } catch (e) {
-      print("Error fetching caregiver profile: $e");
+      // print("Error fetching caregiver profile: $e");
     }
 
     _isLoading = false;
@@ -53,7 +53,7 @@ class CaregiverProfileProvider with ChangeNotifier {
         _profile = CaregiverProfile.fromMap(doc.data()!);
       }
     } catch (e) {
-      print("Error fetching caregiver profile: $e");
+      // print("Error fetching caregiver profile: $e");
     }
 
     _isLoading = false;

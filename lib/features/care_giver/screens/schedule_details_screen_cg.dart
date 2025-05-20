@@ -1,10 +1,12 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:carely/models/booking_model.dart';
 import 'package:carely/providers/seeker_profile_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class ScheduleDetailsScreenCg extends StatefulWidget {
-  const ScheduleDetailsScreenCg({Key? key}) : super(key: key);
+  const ScheduleDetailsScreenCg({super.key});
 
   @override
   State<ScheduleDetailsScreenCg> createState() =>

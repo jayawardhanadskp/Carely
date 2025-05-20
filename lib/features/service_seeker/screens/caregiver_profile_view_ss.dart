@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:carely/models/caregiver_model.dart';
 import 'package:flutter/material.dart';
 

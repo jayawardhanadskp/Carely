@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:carely/models/booking_model.dart';
 import 'package:carely/models/caregiver_model.dart';
 import 'package:carely/providers/booking_provider.dart';

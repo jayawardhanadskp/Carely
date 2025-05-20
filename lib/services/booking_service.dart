@@ -1,6 +1,7 @@
+// ignore_for_file: unnecessary_cast
+
 import 'package:carely/models/booking_model.dart';
-import 'package:carely/models/caregiver_model.dart';
-import 'package:carely/models/seeker_model.dart';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 

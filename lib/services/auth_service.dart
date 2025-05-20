@@ -1,3 +1,5 @@
+// ignore_for_file: use_rethrow_when_possible
+
 import 'package:carely/models/caregiver_model.dart';
 import 'package:carely/models/seeker_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -23,10 +25,8 @@ class AuthService {
           );
       return userCredential;
     } on FirebaseAuthException catch (e) {
-      print('Firebase Auth Error: $e');
       throw e;
     } catch (e) {
-      print('Error creating user: $e');
       throw e;
     }
   }
@@ -42,7 +42,6 @@ class AuthService {
       final String downloadURL = await ref.getDownloadURL();
       return downloadURL;
     } catch (e) {
-      print('Error uploading image to Firebase Storage: $e');
       throw e;
     }
   }
@@ -63,7 +62,6 @@ class AuthService {
         throw Exception('User not authenticated.');
       }
     } catch (e) {
-      print('Error saving caregiver profile to Firestore: $e');
       throw e;
     }
   }
@@ -81,7 +79,6 @@ class AuthService {
     } on FirebaseAuthException catch (e) {
       throw e;
     } catch (e) {
-      print('Unexpected login error: $e');
       throw Exception('An unexpected error occurred.');
     }
   }

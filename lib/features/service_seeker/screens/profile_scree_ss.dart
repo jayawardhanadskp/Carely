@@ -1,8 +1,12 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:carely/providers/seeker_profile_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class ProfileScreen extends StatefulWidget {
+  const ProfileScreen({super.key});
+
   @override
   State<ProfileScreen> createState() => _ProfileScreenState();
 }

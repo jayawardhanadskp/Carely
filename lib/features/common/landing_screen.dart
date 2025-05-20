@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
@@ -35,16 +37,7 @@ class LandingScreen extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             // Tagline
-            const Text(
-              "We're here to make it better",
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.normal,
-                color: darkGrey,
-                fontStyle: FontStyle.italic,
-              ),
-              textAlign: TextAlign.center,
-            ),
+            
             const SizedBox(height: 40),
             SizedBox(
               width: double.infinity,
@@ -52,7 +45,6 @@ class LandingScreen extends StatelessWidget {
                 onPressed: () {
                   // Navigate to caregiver registration/login
                   Navigator.pushNamed(context, '/login'); // Use a named route
-                  print('Caregiver button pressed');
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: lightBlue, // Use lightBlue
@@ -98,7 +90,6 @@ class LandingScreen extends StatelessWidget {
                 onPressed: () {
                   // Navigate to client registration/login
                   Navigator.pushNamed(context, '/login'); // Use a named route
-                  print('Client button pressed');
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: lightGreen, // Use lightGreen

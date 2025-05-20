@@ -32,9 +32,9 @@ class BottomNavBarSs extends StatelessWidget {
           label: 'Bookings',
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.chat_bubble_outline),
-          activeIcon: Icon(Icons.chat_bubble),
-          label: 'Chat',
+          icon: Icon(Icons.list_alt_sharp),
+          activeIcon: Icon(Icons.list_alt),
+          label: 'All Caregivers',
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.person_outline),
