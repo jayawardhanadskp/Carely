@@ -1,22 +1,27 @@
+import 'package:carely/models/caregiver_model.dart';
 import 'package:flutter/material.dart';
 
-class CaregiverProfileViewSs extends StatelessWidget {
+class CaregiverProfileViewSs extends StatefulWidget {
   const CaregiverProfileViewSs({super.key});
 
   @override
+  State<CaregiverProfileViewSs> createState() => _CaregiverProfileViewSsState();
+}
+
+class _CaregiverProfileViewSsState extends State<CaregiverProfileViewSs> {
+  @override
   Widget build(BuildContext context) {
+    final CaregiverProfile caregiver =
+        ModalRoute.of(context)!.settings.arguments as CaregiverProfile;
+
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
         title: const Text('Caregiver Profile'),
         actions: [
           IconButton(
-            icon: Icon(
-              Icons.favorite_border,
-              color: Colors.grey[400],
-            ),
-            onPressed: () {
-            },
+            icon: Icon(Icons.favorite_border, color: Colors.grey[400]),
+            onPressed: () {},
           ),
         ],
       ),
@@ -26,26 +31,21 @@ class CaregiverProfileViewSs extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              // Profile Image
               Container(
                 width: 120,
                 height: 120,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   image: DecorationImage(
-                    image: AssetImage('assets/images/caregiver2.jpg'),
+                    image: NetworkImage(caregiver.profileImageUrl ?? ''),
                     fit: BoxFit.cover,
                   ),
                 ),
               ),
               const SizedBox(height: 16),
-              // Name
-              const Text(
-                'Emily Johnson',
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                ),
+              Text(
+                caregiver.fullName,
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 8),
@@ -53,29 +53,19 @@ class CaregiverProfileViewSs extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(
-                    Icons.star,
-                    color: Colors.amber,
-                    size: 20,
-                  ),
+                  const Icon(Icons.star, color: Colors.amber, size: 20),
                   const SizedBox(width: 4),
                   Text(
                     '4.8 (124 reviews)',
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.grey[600],
-                    ),
+                    style: TextStyle(fontSize: 16, color: Colors.grey[600]),
                   ),
                 ],
               ),
               const SizedBox(height: 16),
               // Bio
               Text(
-                'Compassionate caregiver with over 8 years of experience in elderly care and special needs. Specialized in dementia care and physical therapy assistance.',
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.grey[700],
-                ),
+                caregiver.bio,
+                style: TextStyle(fontSize: 14, color: Colors.grey[700]),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 24),
@@ -112,11 +102,9 @@ class CaregiverProfileViewSs extends StatelessWidget {
                                 ),
                               ),
                               const SizedBox(height: 4),
-                              const Text(
-                                'Female',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                ),
+                              Text(
+                                caregiver.gender ?? '',
+                                style: TextStyle(fontSize: 16),
                               ),
                             ],
                           ),
@@ -133,11 +121,9 @@ class CaregiverProfileViewSs extends StatelessWidget {
                                 ),
                               ),
                               const SizedBox(height: 4),
-                              const Text(
-                                '8 years',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                ),
+                              Text(
+                                caregiver.yearsOfExperience,
+                                style: TextStyle(fontSize: 16),
                               ),
                             ],
                           ),
@@ -147,42 +133,30 @@ class CaregiverProfileViewSs extends StatelessWidget {
                     const SizedBox(height: 16),
                     Text(
                       'Location',
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.grey[600],
-                      ),
+                      style: TextStyle(fontSize: 14, color: Colors.grey[600]),
                     ),
                     const SizedBox(height: 4),
                     Row(
-                      children: const [
-                        Icon(
-                          Icons.location_on,
-                          color: Colors.grey,
-                          size: 16,
-                        ),
+                      children: [
+                        Icon(Icons.location_on, color: Colors.grey, size: 16),
                         SizedBox(width: 4),
                         Text(
-                          'San Francisco, CA (5 miles away)',
-                          style: TextStyle(
-                            fontSize: 16,
-                          ),
+                          caregiver.location,
+                          style: TextStyle(fontSize: 16),
                         ),
                       ],
                     ),
                     const SizedBox(height: 16),
                     Text(
                       'Qualifications',
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.grey[600],
-                      ),
+                      style: TextStyle(fontSize: 14, color: Colors.grey[600]),
                     ),
                     const SizedBox(height: 8),
                     Wrap(
                       spacing: 8,
                       runSpacing: 8,
                       children: [
-                        _buildQualificationChip('Certified Nursing Assistant'),
+                        _buildQualificationChip(caregiver.qualifications),
                         _buildQualificationChip('First Aid'),
                         _buildQualificationChip('Dementia Care'),
                       ],
@@ -199,18 +173,17 @@ class CaregiverProfileViewSs extends StatelessWidget {
                           ),
                         ),
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 4,
+                          ),
                           decoration: BoxDecoration(
                             color: Colors.green.withOpacity(0.1),
                             borderRadius: BorderRadius.circular(15),
                           ),
                           child: Row(
                             children: const [
-                              Icon(
-                                Icons.circle,
-                                color: Colors.green,
-                                size: 10,
-                              ),
+                              Icon(Icons.circle, color: Colors.green, size: 10),
                               SizedBox(width: 4),
                               Text(
                                 'Available',
@@ -333,9 +306,7 @@ class CaregiverProfileViewSs extends StatelessWidget {
                             children: const [
                               Text(
                                 'View all',
-                                style: TextStyle(
-                                  color: Colors.blue,
-                                ),
+                                style: TextStyle(color: Colors.blue),
                               ),
                               Icon(
                                 Icons.chevron_right,
@@ -383,13 +354,11 @@ class CaregiverProfileViewSs extends StatelessWidget {
             ),
           ),
           onPressed: () {
+            Navigator.pushNamed(context, '/seeker/bookingCaregiver', arguments: caregiver,);
           },
           child: const Text(
             'Book This Caregiver',
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-            ),
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
           ),
         ),
       ),
@@ -405,10 +374,7 @@ class CaregiverProfileViewSs extends StatelessWidget {
       ),
       child: Text(
         label,
-        style: const TextStyle(
-          color: Color(0xFF3B82F6),
-          fontSize: 12,
-        ),
+        style: const TextStyle(color: Color(0xFF3B82F6), fontSize: 12),
       ),
     );
   }
@@ -453,7 +419,12 @@ class CaregiverProfileViewSs extends StatelessWidget {
     );
   }
 
-  Widget _buildReviewItem(String name, int rating, String comment, String time) {
+  Widget _buildReviewItem(
+    String name,
+    int rating,
+    String comment,
+    String time,
+  ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -462,10 +433,7 @@ class CaregiverProfileViewSs extends StatelessWidget {
           children: [
             Text(
               name,
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
             Row(
               children: List.generate(5, (index) {
@@ -479,21 +447,9 @@ class CaregiverProfileViewSs extends StatelessWidget {
           ],
         ),
         const SizedBox(height: 8),
-        Text(
-          comment,
-          style: TextStyle(
-            fontSize: 14,
-            color: Colors.grey[700],
-          ),
-        ),
+        Text(comment, style: TextStyle(fontSize: 14, color: Colors.grey[700])),
         const SizedBox(height: 4),
-        Text(
-          time,
-          style: TextStyle(
-            fontSize: 12,
-            color: Colors.grey[500],
-          ),
-        ),
+        Text(time, style: TextStyle(fontSize: 12, color: Colors.grey[500])),
         const SizedBox(height: 8),
       ],
     );

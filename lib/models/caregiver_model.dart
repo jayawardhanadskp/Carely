@@ -1,9 +1,7 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
-
 class CaregiverProfile {
-  final String? uid;
+  final String? id;
   final String role;
   final String fullName;
   final String email;
@@ -15,9 +13,10 @@ class CaregiverProfile {
   final String bio;
   final String? profileImageUrl;
   final DateTime? registrationTimestamp;
+  final List<String> bookings;
 
   CaregiverProfile({
-    this.uid,
+    this.id,
     required this.role,
     required this.fullName,
     required this.email,
@@ -29,11 +28,12 @@ class CaregiverProfile {
     required this.bio,
     this.profileImageUrl,
     this.registrationTimestamp,
+    this.bookings = const [], // default empty
   });
 
   Map<String, dynamic> toMap() {
-    return <String, dynamic>{
-      'uid': uid,
+    return {
+      'id': id,
       'role': role,
       'fullName': fullName,
       'email': email,
@@ -45,27 +45,31 @@ class CaregiverProfile {
       'bio': bio,
       'profileImageUrl': profileImageUrl,
       'registrationTimestamp': registrationTimestamp?.millisecondsSinceEpoch,
+      'bookings': bookings,
     };
   }
 
   factory CaregiverProfile.fromMap(Map<String, dynamic> map) {
     return CaregiverProfile(
-      uid: map['uid'] != null ? map['uid'] as String : null,
-      role: map['role'] as String,
-      fullName: map['fullName'] as String,
-      email: map['email'] as String,
-      phone: map['phone'] as String,
-      gender: map['gender'] != null ? map['gender'] as String : null,
-      yearsOfExperience: map['yearsOfExperience'] as String,
-      qualifications: map['qualifications'] as String,
-      location: map['location'] as String,
-      bio: map['bio'] as String,
-      profileImageUrl: map['profileImageUrl'] != null ? map['profileImageUrl'] as String : null,
-      registrationTimestamp: map['registrationTimestamp'] != null ? DateTime.fromMillisecondsSinceEpoch(map['registrationTimestamp'] as int) : null,
+      id: map['id'],
+      role: map['role'],
+      fullName: map['fullName'],
+      email: map['email'],
+      phone: map['phone'],
+      gender: map['gender'],
+      yearsOfExperience: map['yearsOfExperience'],
+      qualifications: map['qualifications'],
+      location: map['location'],
+      bio: map['bio'],
+      profileImageUrl: map['profileImageUrl'],
+      registrationTimestamp: map['registrationTimestamp'] != null
+          ? DateTime.fromMillisecondsSinceEpoch(map['registrationTimestamp'])
+          : null,
+      bookings: List<String>.from(map['bookings'] ?? []),
     );
   }
 
   String toJson() => json.encode(toMap());
-
-  factory CaregiverProfile.fromJson(String source, String id) => CaregiverProfile.fromMap(json.decode(source) as Map<String, dynamic>);
+  factory CaregiverProfile.fromJson(String source) =>
+      CaregiverProfile.fromMap(json.decode(source));
 }
