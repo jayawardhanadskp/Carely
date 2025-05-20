@@ -5,7 +5,7 @@ class CaregiverCardSs extends StatelessWidget {
   final String specialty;
   final double rating;
   final VoidCallback onViewProfile;
-  
+
 
   const CaregiverCardSs({
     super.key,
@@ -99,7 +99,7 @@ class CaregiverCardSs extends StatelessWidget {
               child: Text(
                 'View Profile',
                 style: TextStyle(
-                  color: Colors.blue,
+                  color: Color(0xFF2563EB),
                   fontSize: 14,
                 ),
               ),
