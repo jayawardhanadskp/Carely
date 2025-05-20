@@ -21,7 +21,7 @@ class MyApp extends StatelessWidget {
       title: 'Carely',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
-       initialRoute: '/caregiver/main', // '/seeker/main',
+       initialRoute: '/seeker/register', // '/seeker/main',
       onGenerateRoute: AppRouter.generateRoute,
     );
   }

@@ -1,7 +1,10 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+// ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'dart:convert';
+
 
 class CaregiverProfile {
   final String? uid;
+  final String role;
   final String fullName;
   final String email;
   final String phone;
@@ -15,6 +18,7 @@ class CaregiverProfile {
 
   CaregiverProfile({
     this.uid,
+    required this.role,
     required this.fullName,
     required this.email,
     required this.phone,
@@ -27,26 +31,10 @@ class CaregiverProfile {
     this.registrationTimestamp,
   });
 
-  // Factory method to create a CaregiverProfile from a Firestore document
-  factory CaregiverProfile.fromFirestore(Map<String, dynamic> data, String? uid) {
-    return CaregiverProfile(
-      uid: uid,
-      fullName: data['fullName'] ?? '',
-      email: data['email'] ?? '',
-      phone: data['phone'] ?? '',
-      gender: data['gender'],
-      yearsOfExperience: data['yearsOfExperience'] ?? '',
-      qualifications: data['qualifications'] ?? '',
-      location: data['location'] ?? '',
-      bio: data['bio'] ?? '',
-      profileImageUrl: data['profileImageUrl'],
-      registrationTimestamp: data['registrationTimestamp']?.toDate(),
-    );
-  }
-
-  // Method to convert the CaregiverProfile to a Firestore-compatible map
-  Map<String, dynamic> toFirestore() {
-    return {
+  Map<String, dynamic> toMap() {
+    return <String, dynamic>{
+      'uid': uid,
+      'role': role,
       'fullName': fullName,
       'email': email,
       'phone': phone,
@@ -56,7 +44,28 @@ class CaregiverProfile {
       'location': location,
       'bio': bio,
       'profileImageUrl': profileImageUrl,
-      'registrationTimestamp': registrationTimestamp ?? FieldValue.serverTimestamp(),
+      'registrationTimestamp': registrationTimestamp?.millisecondsSinceEpoch,
     };
   }
+
+  factory CaregiverProfile.fromMap(Map<String, dynamic> map) {
+    return CaregiverProfile(
+      uid: map['uid'] != null ? map['uid'] as String : null,
+      role: map['role'] as String,
+      fullName: map['fullName'] as String,
+      email: map['email'] as String,
+      phone: map['phone'] as String,
+      gender: map['gender'] != null ? map['gender'] as String : null,
+      yearsOfExperience: map['yearsOfExperience'] as String,
+      qualifications: map['qualifications'] as String,
+      location: map['location'] as String,
+      bio: map['bio'] as String,
+      profileImageUrl: map['profileImageUrl'] != null ? map['profileImageUrl'] as String : null,
+      registrationTimestamp: map['registrationTimestamp'] != null ? DateTime.fromMillisecondsSinceEpoch(map['registrationTimestamp'] as int) : null,
+    );
+  }
+
+  String toJson() => json.encode(toMap());
+
+  factory CaregiverProfile.fromJson(String source, String id) => CaregiverProfile.fromMap(json.decode(source) as Map<String, dynamic>);
 }
