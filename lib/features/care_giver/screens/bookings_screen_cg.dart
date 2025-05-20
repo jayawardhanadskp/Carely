@@ -1,6 +1,9 @@
 import 'package:carely/models/booking_model.dart';
+import 'package:carely/providers/booking_provider.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-
+import 'package:provider/provider.dart';
 
 class BookingsScreenCg extends StatefulWidget {
   const BookingsScreenCg({super.key});
@@ -12,6 +15,23 @@ class BookingsScreenCg extends StatefulWidget {
 class _BookingsScreenCgState extends State<BookingsScreenCg> {
   int _selectedTabIndex = 0;
   final List<String> _tabs = ['Upcoming', 'Pending', 'Completed'];
+
+  Future<void> _updateBookingStatus(String bookingId, String newStatus) async {
+  try {
+    await FirebaseFirestore.instance
+        .collection('bookings')
+        .doc(bookingId)
+        .update({'status': newStatus});
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Booking status updated to "$newStatus"')),
+    );
+  } catch (e) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Failed to update status: $e')),
+    );
+  }
+}
+
 
   @override
   Widget build(BuildContext context) {
@@ -45,30 +65,34 @@ class _BookingsScreenCgState extends State<BookingsScreenCg> {
                     child: Container(
                       padding: const EdgeInsets.symmetric(vertical: 12),
                       decoration: BoxDecoration(
-                        color: _selectedTabIndex == index
-                            ? Colors.white
-                            : Colors.transparent,
+                        color:
+                            _selectedTabIndex == index
+                                ? Colors.white
+                                : Colors.transparent,
                         borderRadius: BorderRadius.circular(12),
-                        boxShadow: _selectedTabIndex == index
-                            ? [
-                                BoxShadow(
-                                  color: Colors.grey.withOpacity(0.1),
-                                  spreadRadius: 1,
-                                  blurRadius: 3,
-                                  offset: const Offset(0, 1),
-                                ),
-                              ]
-                            : null,
+                        boxShadow:
+                            _selectedTabIndex == index
+                                ? [
+                                  BoxShadow(
+                                    color: Colors.grey.withOpacity(0.1),
+                                    spreadRadius: 1,
+                                    blurRadius: 3,
+                                    offset: const Offset(0, 1),
+                                  ),
+                                ]
+                                : null,
                       ),
                       child: Text(
                         _tabs[index],
                         style: TextStyle(
-                          color: _selectedTabIndex == index
-                              ? Colors.black
-                              : Colors.grey,
-                          fontWeight: _selectedTabIndex == index
-                              ? FontWeight.bold
-                              : FontWeight.normal,
+                          color:
+                              _selectedTabIndex == index
+                                  ? Colors.black
+                                  : Colors.grey,
+                          fontWeight:
+                              _selectedTabIndex == index
+                                  ? FontWeight.bold
+                                  : FontWeight.normal,
                         ),
                         textAlign: TextAlign.center,
                       ),
@@ -80,45 +104,8 @@ class _BookingsScreenCgState extends State<BookingsScreenCg> {
           ),
 
           // Content based on selected tab
-          Expanded(
-            child: _buildTabContent(),
-          ),
+          Expanded(child: _buildTabContent()),
         ],
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed,
-        currentIndex: 1,
-        selectedItemColor: Colors.blue,
-        unselectedItemColor: Colors.grey,
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home_outlined),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.calendar_today_outlined),
-            label: 'Bookings',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.chat_outlined),
-            label: 'Chat',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person_outline),
-            label: 'Profile',
-          ),
-        ],
-        onTap: (index) {
-          if (index == 0) {
-            Navigator.pushReplacementNamed(context, '/');
-          } else if (index == 1) {
-            // Already on bookings
-          } else if (index == 2) {
-            Navigator.pushReplacementNamed(context, '/chat');
-          } else if (index == 3) {
-            Navigator.pushReplacementNamed(context, '/profile');
-          }
-        },
       ),
     );
   }
@@ -137,360 +124,380 @@ class _BookingsScreenCgState extends State<BookingsScreenCg> {
   }
 
   Widget _buildUpcomingTab() {
-    // Sample data for upcoming bookings (based on Image 3)
-    final upcomingBookings = [
-      Booking(
-        id: '',
+    final caregiverId = FirebaseAuth.instance.currentUser!.uid;
+    final provider = Provider.of<BookingProvider>(context);
 
-        caregiverId: '',
+    return StreamBuilder<List<Booking>>(
+      stream: provider.getBookingsByStatus(caregiverId, 'confirmed'),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        } else if (snapshot.hasError) {
+          return Center(child: Text('Error: ${snapshot.error}'));
+        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+          return const Center(child: Text('No upcoming bookings'));
+        }
 
-        clientName: 'Sarah Miller',
-        careType: 'Elderly Care',
-        date: DateTime.now(),
-        timeStart: '2:00 PM',
-        timeEnd: '6:00 PM',
-        clientAddress: '1234 Pine Street, San Francisco',
-        status: BookingStatusType.confirmed,
-        clientImageUrl: 'assets/sarah_miller.jpg',
-        caregiverName: '',
-        caregiverRating: 5,
-        caregiverImageUrl: '',
-        clientId: '',
-      ),
-    ];
+        final bookings = snapshot.data!;
 
-    return ListView.builder(
-      padding: const EdgeInsets.all(16),
-      itemCount: upcomingBookings.length,
-      itemBuilder: (context, index) {
-        final booking = upcomingBookings[index];
-        return Container(
-          margin: const EdgeInsets.only(bottom: 16),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(12),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.grey.withOpacity(0.1),
-                spreadRadius: 1,
-                blurRadius: 5,
-                offset: const Offset(0, 2),
-              ),
-            ],
-          ),
-          child: Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(16),
-                child: Row(
-                  children: [
-                    CircleAvatar(
-                      backgroundImage: AssetImage(booking.clientImageUrl ?? 'assets/default_user.png'),
-                      radius: 20,
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            booking.clientName,
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
-                            ),
-                          ),
-                          Text(
-                            booking.careType,
-                            style: TextStyle(
-                              color: Colors.grey[600],
-                              fontSize: 14,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                      decoration: BoxDecoration(
-                        color: Colors.green.shade50,
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: const Text(
-                        'Confirmed',
-                        style: TextStyle(
-                          color: Colors.green,
-                          fontSize: 12,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const Divider(height: 1),
-              Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  children: [
-                    Row(
-                      children: [
-                        const Icon(Icons.event, size: 16, color: Colors.red),
-                        const SizedBox(width: 8),
-                        Text(
-                          '${booking.date}, ${booking.timeStart} - ${booking.timeEnd}',
-                          style: TextStyle(color: Colors.grey[700]),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-                    Row(
-                      children: [
-                        const Icon(Icons.location_on_outlined, size: 16, color: Colors.grey),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: Text(
-                            booking.clientAddress,
-                            style: TextStyle(color: Colors.grey[700]),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-              Container(
-                width: double.infinity,
-                decoration: const BoxDecoration(
-                  color: Colors.blue,
-                  borderRadius: BorderRadius.only(
-                    bottomLeft: Radius.circular(12),
-                    bottomRight: Radius.circular(12),
-                  ),
-                ),
-                child: TextButton(
-                  onPressed: () {},
-                  style: TextButton.styleFrom(
-                    foregroundColor: Colors.white,
-                    shape: const RoundedRectangleBorder(
-                      borderRadius: BorderRadius.only(
-                        bottomLeft: Radius.circular(12),
-                        bottomRight: Radius.circular(12),
-                      ),
-                    ),
-                  ),
-                  child: const Text('View Details'),
-                ),
-              ),
-            ],
-          ),
+        return ListView.builder(
+          padding: const EdgeInsets.all(16),
+          itemCount: bookings.length,
+          itemBuilder: (context, index) {
+            final booking = bookings[index];
+
+            return FutureBuilder<DocumentSnapshot>(
+              future:
+                  FirebaseFirestore.instance
+                      .collection('seekers')
+                      .doc(booking.seekerId)
+                      .get(),
+              builder: (context, seekerSnapshot) {
+                if (seekerSnapshot.connectionState == ConnectionState.waiting) {
+                  return const SizedBox(
+                    height: 100,
+                    child: Center(child: CircularProgressIndicator()),
+                  );
+                }
+
+                final seekerData =
+                    seekerSnapshot.data?.data() as Map<String, dynamic>?;
+
+                final seekerName = seekerData?['fullName'] ?? 'Unknown';
+                final seekerImage =
+                    seekerData?['profileImageUrl'] ?? 'assets/default_user.png';
+                final address = seekerData?['location'] ?? 'No address';
+
+                return _buildBookingCard(
+                  name: seekerName,
+                  imageUrl: seekerImage,
+                  careType: booking.serviceType,
+                  date: booking.date,
+                  time: booking.time,
+                  address: address,
+                  statusLabel: 'Confirmed',
+                  statusColor: Colors.green,
+                );
+              },
+            );
+          },
         );
       },
     );
   }
 
-  Widget _buildPendingTab() {
-    // Sample data for pending requests
-    final pendingRequests = [
-      Booking(
-        id: '',
-
-        caregiverId: '',
-
-        clientName: 'Sarah Miller',
-        careType: 'Elderly Care',
-        date: DateTime.now(),
-        timeStart: '2:00 PM',
-        timeEnd: '6:00 PM',
-        clientAddress: '1234 Pine Street, San Francisco',
-        status: BookingStatusType.confirmed,
-        clientImageUrl: 'assets/sarah_miller.jpg',
-        caregiverName: '',
-        caregiverRating: 5,
-        caregiverImageUrl: '',
-        clientId: '',
+  Widget _buildBookingCard({
+    required String name,
+    required String imageUrl,
+    required String careType,
+    required DateTime date,
+    required String time,
+    required String address,
+    required String statusLabel,
+    required Color statusColor,
+  }) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.1),
+            spreadRadius: 1,
+            blurRadius: 5,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
-    ];
-
-    return pendingRequests.isEmpty
-        ? const Center(child: Text('No pending requests'))
-        : ListView.builder(
+      child: Column(
+        children: [
+          Padding(
             padding: const EdgeInsets.all(16),
-            itemCount: pendingRequests.length,
-            itemBuilder: (context, index) {
-              final request = pendingRequests[index];
-              return Container(
-                margin: const EdgeInsets.only(bottom: 16),
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(12),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey.withOpacity(0.1),
-                      spreadRadius: 1,
-                      blurRadius: 5,
-                      offset: const Offset(0, 2),
+            child: Row(
+              children: [
+                CircleAvatar(
+                  backgroundImage:
+                      imageUrl.startsWith('http')
+                          ? NetworkImage(imageUrl)
+                          : AssetImage(imageUrl) as ImageProvider,
+                  radius: 20,
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        name,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
+                      ),
+                      Text(
+                        careType,
+                        style: TextStyle(color: Colors.grey[600], fontSize: 14),
+                      ),
+                    ],
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
+                  ),
+                  decoration: BoxDecoration(
+                    color: statusColor.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Text(
+                    statusLabel,
+                    style: TextStyle(
+                      color: statusColor,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const Divider(height: 1),
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              children: [
+                Row(
+                  children: [
+                    const Icon(Icons.event, size: 16, color: Colors.red),
+                    const SizedBox(width: 8),
+                    Text(
+                      '${date.toLocal().toString().split(' ')[0]}, $time',
+                      style: TextStyle(color: Colors.grey[700]),
                     ),
                   ],
                 ),
+                const SizedBox(height: 8),
+                Row(
+                  children: [
+                    const Icon(
+                      Icons.location_on_outlined,
+                      size: 16,
+                      color: Colors.grey,
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        address,
+                        style: TextStyle(color: Colors.grey[700]),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          Container(
+            width: double.infinity,
+            decoration: const BoxDecoration(
+              color: Colors.blue,
+              borderRadius: BorderRadius.only(
+                bottomLeft: Radius.circular(12),
+                bottomRight: Radius.circular(12),
+              ),
+            ),
+            child: TextButton(
+              onPressed: () {},
+              style: TextButton.styleFrom(
+                foregroundColor: Colors.white,
+                shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.only(
+                    bottomLeft: Radius.circular(12),
+                    bottomRight: Radius.circular(12),
+                  ),
+                ),
+              ),
+              child: const Text('View Details'),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPendingBookingCard({
+    required String id,
+    required String name,
+    required String imageUrl,
+    required String careType,
+    required DateTime date,
+    required String time,
+    required String address,
+    required String note,
+    required String statusLabel,
+    required Color statusColor,
+  }) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.1),
+            spreadRadius: 1,
+            blurRadius: 5,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              CircleAvatar(
+                  backgroundImage:
+                      imageUrl.startsWith('http')
+                          ? NetworkImage(imageUrl)
+                          : AssetImage(imageUrl) as ImageProvider,
+                  radius: 20,
+                ),
+              const SizedBox(width: 12),
+              Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Row(
-                      children: [
-                        CircleAvatar(
-                          backgroundImage: AssetImage(request.clientImageUrl ?? 'assets/default_user.png'),
-                          radius: 20,
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                request.clientName,
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 16,
-                                ),
-                              ),
-                              Text(
-                                request.careType,
-                                style: TextStyle(
-                                  color: Colors.grey[600],
-                                  fontSize: 14,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                          decoration: BoxDecoration(
-                            color: Colors.blue.shade50,
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: const Text(
-                            'New',
-                            style: TextStyle(
-                              color: Colors.blue,
-                              fontSize: 12,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 12),
-                    Row(
-                      children: [
-                        const Icon(Icons.event, size: 16, color: Colors.red),
-                        const SizedBox(width: 8),
-                        Text(
-                          '${request.date}, ${request.timeStart} - ${request.timeEnd}',
-                          style: TextStyle(color: Colors.grey[700]),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-                    Row(
-                      children: [
-                        const Icon(Icons.location_on_outlined, size: 16, color: Colors.grey),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: Text(
-                            request.clientAddress,
-                            style: TextStyle(color: Colors.grey[700]),
-                          ),
-                        ),
-                      ],
-                    ),
-                    if (request.notes != null) ...[
-                      const SizedBox(height: 12),
-                      Container(
-                        padding: const EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                          color: Colors.grey[50],
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Text(
-                          '"${request.notes}"',
-                          style: TextStyle(
-                            color: Colors.grey[700],
-                            fontStyle: FontStyle.italic,
-                          ),
-                        ),
+                    Text(
+                      name,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
                       ),
-                    ],
-                    const SizedBox(height: 16),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: OutlinedButton(
-                            onPressed: () {},
-                            style: OutlinedButton.styleFrom(
-                              foregroundColor: Colors.red,
-                              side: const BorderSide(color: Colors.red),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                            ),
-                            child: const Text('Decline'),
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: ElevatedButton(
-                            onPressed: () {},
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.blue,
-                              foregroundColor: Colors.white,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                            ),
-                            child: const Text('Accept'),
-                          ),
-                        ),
-                      ],
+                    ),
+                    Text(
+                      careType,
+                      style: TextStyle(color: Colors.grey[600], fontSize: 14),
                     ),
                   ],
                 ),
-              );
-            },
-          );
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: Colors.blue.shade50,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: const Text(
+                  'New',
+                  style: TextStyle(
+                    color: Colors.blue,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              const Icon(Icons.event, size: 16, color: Colors.red),
+              const SizedBox(width: 8),
+              Text(
+                '${date.toLocal().toString().split(' ')[0]}, $time',
+                style: TextStyle(color: Colors.grey[700]),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Row(
+            children: [
+              const Icon(
+                Icons.location_on_outlined,
+                size: 16,
+                color: Colors.grey,
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  address,
+                  style: TextStyle(color: Colors.grey[700]),
+                ),
+              ),
+            ],
+          ),
+          if (note != null) ...[
+            const SizedBox(height: 12),
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.grey[50],
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Text(
+                '"$note"',
+                style: TextStyle(
+                  color: Colors.grey[700],
+                  fontStyle: FontStyle.italic,
+                ),
+              ),
+            ),
+          ],
+          const SizedBox(height: 16),
+          Row(
+            children: [
+              Expanded(
+                child: OutlinedButton(
+                  onPressed: () async{
+                    await _updateBookingStatus(id, 'declined');
+                  },
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: Colors.red,
+                    side: const BorderSide(color: Colors.red),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                  child: const Text('Decline'),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: ElevatedButton(
+                  onPressed: () async {
+                    await _updateBookingStatus(id, 'confirmed');
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.blue,
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                  child: const Text('Accept'),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
   }
 
-  Widget _buildCompletedTab() {
-    // Sample data for completed bookings (based on Images 1-2)
-    final completedBookings = [
-      Booking(
-        id: '',
-
-        caregiverId: '',
-
-        clientName: 'Sarah Miller',
-        careType: 'Elderly Care',
-        date: DateTime.now(),
-        timeStart: '2:00 PM',
-        timeEnd: '6:00 PM',
-        clientAddress: '1234 Pine Street, San Francisco',
-        status: BookingStatusType.confirmed,
-        clientImageUrl: 'assets/sarah_miller.jpg',
-        caregiverName: '',
-        caregiverRating: 5,
-        caregiverImageUrl: '',
-        clientId: '',
-      ),
-    ];
-
-    return ListView.builder(
-      padding: const EdgeInsets.all(16),
-      itemCount: completedBookings.length,
-      itemBuilder: (context, index) {
-        final booking = completedBookings[index];
-        return Container(
+  Widget _buildEndBookingCard({
+    required String name,
+    required String imageUrl,
+    required String careType,
+    required DateTime date,
+    required String time,
+    required String address,
+    required String statusLabel,
+    required Color statusColor,
+  }) {
+    return Container(
           margin: const EdgeInsets.only(bottom: 16),
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
@@ -511,12 +518,12 @@ class _BookingsScreenCgState extends State<BookingsScreenCg> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   CircleAvatar(
-                    backgroundImage: AssetImage(booking.clientImageUrl ?? 'assets/default_user.png'),
-                    radius: 20,
-                    child: booking.clientImageUrl == null
-                        ? const Icon(Icons.person, color: Colors.white)
-                        : null,
-                  ),
+                  backgroundImage:
+                      imageUrl.startsWith('http')
+                          ? NetworkImage(imageUrl)
+                          : AssetImage(imageUrl) as ImageProvider,
+                  radius: 20,
+                ),
                   const SizedBox(width: 12),
                   Expanded(
                     child: Column(
@@ -526,7 +533,7 @@ class _BookingsScreenCgState extends State<BookingsScreenCg> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              booking.clientName,
+                              name,
                               style: const TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 16,
@@ -569,7 +576,7 @@ class _BookingsScreenCgState extends State<BookingsScreenCg> {
                             const Icon(Icons.access_time, size: 14, color: Colors.grey),
                             const SizedBox(width: 4),
                             Text(
-                              '${booking.timeStart} - ${booking.timeEnd}',
+                              '${date.toLocal().toString().split(' ')[0]}, $time',
                               style: TextStyle(
                                 color: Colors.grey[700],
                                 fontSize: 14,
@@ -583,7 +590,7 @@ class _BookingsScreenCgState extends State<BookingsScreenCg> {
                             const Icon(Icons.location_on_outlined, size: 14, color: Colors.grey),
                             const SizedBox(width: 4),
                             Text(
-                              booking.clientAddress,
+                              address,
                               style: TextStyle(
                                 color: Colors.grey[700],
                                 fontSize: 14,
@@ -598,6 +605,132 @@ class _BookingsScreenCgState extends State<BookingsScreenCg> {
               ),
             ],
           ),
+        );
+  }
+
+  Widget _buildPendingTab() {
+    final caregiverId = FirebaseAuth.instance.currentUser!.uid;
+    final provider = Provider.of<BookingProvider>(context);
+
+    return StreamBuilder<List<Booking>>(
+      stream: provider.getBookingsByStatus(caregiverId, 'pending'),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        } else if (snapshot.hasError) {
+          return Center(child: Text('Error: ${snapshot.error}'));
+        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+          return const Center(child: Text('No Pending bookings'));
+        }
+
+        final bookings = snapshot.data!;
+
+        return ListView.builder(
+          padding: const EdgeInsets.all(16),
+          itemCount: bookings.length,
+          itemBuilder: (context, index) {
+            final booking = bookings[index];
+
+            return FutureBuilder<DocumentSnapshot>(
+              future:
+                  FirebaseFirestore.instance
+                      .collection('seekers')
+                      .doc(booking.seekerId)
+                      .get(),
+              builder: (context, seekerSnapshot) {
+                if (seekerSnapshot.connectionState == ConnectionState.waiting) {
+                  return const SizedBox(
+                    height: 100,
+                    child: Center(child: CircularProgressIndicator()),
+                  );
+                }
+
+                final seekerData =
+                    seekerSnapshot.data?.data() as Map<String, dynamic>?;
+
+                final seekerName = seekerData?['fullName'] ?? 'Unknown';
+                final seekerImage =
+                    seekerData?['profileImageUrl'] ?? 'assets/default_user.png';
+                final address = seekerData?['location'] ?? 'No address';
+
+                return _buildPendingBookingCard(
+                  id: booking.id ?? '',
+                  name: seekerName,
+                  imageUrl: seekerImage,
+                  careType: booking.serviceType,
+                  date: booking.date,
+                  time: booking.time,
+                  address: address,
+                  note: booking.notes,
+                  statusLabel: 'Confirmed',
+                  statusColor: Colors.green,
+                );
+              },
+            );
+          },
+        );
+      },
+    );
+  }
+
+  Widget _buildCompletedTab() {
+    final caregiverId = FirebaseAuth.instance.currentUser!.uid;
+    final provider = Provider.of<BookingProvider>(context);
+
+    return StreamBuilder<List<Booking>>(
+      stream: provider.getBookingsByStatus(caregiverId, 'declined'),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        } else if (snapshot.hasError) {
+          return Center(child: Text('Error: ${snapshot.error}'));
+        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+          return const Center(child: Text('No Completed bookings'));
+        }
+
+        final bookings = snapshot.data!;
+
+        return ListView.builder(
+          padding: const EdgeInsets.all(16),
+          itemCount: bookings.length,
+          itemBuilder: (context, index) {
+            final booking = bookings[index];
+
+            return FutureBuilder<DocumentSnapshot>(
+              future:
+                  FirebaseFirestore.instance
+                      .collection('seekers')
+                      .doc(booking.seekerId)
+                      .get(),
+              builder: (context, seekerSnapshot) {
+                if (seekerSnapshot.connectionState == ConnectionState.waiting) {
+                  return const SizedBox(
+                    height: 100,
+                    child: Center(child: CircularProgressIndicator()),
+                  );
+                }
+
+                final seekerData =
+                    seekerSnapshot.data?.data() as Map<String, dynamic>?;
+
+                final seekerName = seekerData?['fullName'] ?? 'Unknown';
+                final seekerImage =
+                    seekerData?['profileImageUrl'] ?? 'assets/default_user.png';
+                final address = seekerData?['location'] ?? 'No address';
+
+                return _buildEndBookingCard(
+                  name: seekerName,
+                  imageUrl: seekerImage,
+                  careType: booking.serviceType,
+                  date: booking.date,
+                  time: booking.time,
+                  address: address,
+                  statusLabel: 'Completed',
+                  statusColor: Colors.grey,
+                );
+              },
+            );
+          },
         );
       },
     );
