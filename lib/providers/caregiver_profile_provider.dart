@@ -36,4 +36,28 @@ class CaregiverProfileProvider with ChangeNotifier {
     _isLoading = false;
     notifyListeners();
   }
+
+  Future<CaregiverProfile?> fetchCaregiverProfileById(
+    String caregiverId,
+  ) async {
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      final doc =
+          await FirebaseFirestore.instance
+              .collection('caregivers')
+              .doc(caregiverId)
+              .get();
+      if (doc.exists) {
+        _profile = CaregiverProfile.fromMap(doc.data()!);
+      }
+    } catch (e) {
+      print("Error fetching caregiver profile: $e");
+    }
+
+    _isLoading = false;
+    notifyListeners();
+    return null;
+  }
 }

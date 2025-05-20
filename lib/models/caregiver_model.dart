@@ -62,9 +62,12 @@ class CaregiverProfile {
       location: map['location'],
       bio: map['bio'],
       profileImageUrl: map['profileImageUrl'],
-      registrationTimestamp: map['registrationTimestamp'] != null
-          ? DateTime.fromMillisecondsSinceEpoch(map['registrationTimestamp'])
-          : null,
+      registrationTimestamp:
+          map['registrationTimestamp'] != null
+              ? DateTime.fromMillisecondsSinceEpoch(
+                map['registrationTimestamp'],
+              )
+              : null,
       bookings: List<String>.from(map['bookings'] ?? []),
     );
   }
