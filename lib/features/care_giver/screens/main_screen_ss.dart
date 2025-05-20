@@ -16,14 +16,9 @@ class MainScreenCg extends StatefulWidget {
 
 class MainScreenCgState extends State<MainScreenCg> {
   int _currentIndex = 0;
-  
+
   final List<Widget> _screens = [
-    
-    
-    // ChatScreen(),
-    // ProfileScreen(),
-    // HomeScreenCg(),
-        Center(child: Text('Chat Screen')),
+    HomeScreenCg(),
 
     BookingsScreenCg(),
     Center(child: Text('Chat Screen')),
