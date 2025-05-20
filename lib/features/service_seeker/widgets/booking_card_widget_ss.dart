@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
 
-enum BookingStatus {
-  confirmed,
-  pending,
-  cancelled
-}
+enum BookingStatus { confirmed, pending, cancelled }
 
 class BookingCardSs extends StatelessWidget {
   final String caregiverName;
@@ -13,6 +9,7 @@ class BookingCardSs extends StatelessWidget {
   final String time;
   final String location;
   final BookingStatus status;
+  final String? imageUrl;
 
   const BookingCardSs({
     super.key,
@@ -22,6 +19,7 @@ class BookingCardSs extends StatelessWidget {
     required this.time,
     required this.location,
     required this.status,
+    required this.imageUrl,
   });
 
   @override
@@ -46,7 +44,7 @@ class BookingCardSs extends StatelessWidget {
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _buildCaregiverAvatar(),
+                _buildCaregiverAvatar(imageUrl),
                 const SizedBox(width: 16),
                 Expanded(
                   child: Column(
@@ -78,7 +76,10 @@ class BookingCardSs extends StatelessWidget {
                 Row(
                   children: [
                     IconButton(
-                      icon: Icon(Icons.chat_bubble_outline, color: Colors.grey[600]),
+                      icon: Icon(
+                        Icons.chat_bubble_outline,
+                        color: Colors.grey[600],
+                      ),
                       onPressed: () {},
                     ),
                     IconButton(
@@ -95,13 +96,16 @@ class BookingCardSs extends StatelessWidget {
     );
   }
 
-  Widget _buildCaregiverAvatar() {
+  Widget _buildCaregiverAvatar(String? imageUrl) {
     return Stack(
       children: [
         CircleAvatar(
           radius: 30,
           backgroundColor: Colors.grey[200],
-          backgroundImage: AssetImage('assets/placeholder_avatar.png'),
+          backgroundImage:
+              imageUrl != null
+                  ? NetworkImage(imageUrl)
+                  : AssetImage('assets/user_avatar.png') as ImageProvider,
         ),
         Positioned(
           bottom: 0,
@@ -123,11 +127,7 @@ class BookingCardSs extends StatelessWidget {
                     fontSize: 12,
                   ),
                 ),
-                Icon(
-                  Icons.star,
-                  color: Colors.white,
-                  size: 12,
-                ),
+                Icon(Icons.star, color: Colors.white, size: 12),
               ],
             ),
           ),
@@ -139,19 +139,9 @@ class BookingCardSs extends StatelessWidget {
   Widget _buildInfoRow(IconData icon, String text) {
     return Row(
       children: [
-        Icon(
-          icon,
-          size: 16,
-          color: Colors.grey[600],
-        ),
+        Icon(icon, size: 16, color: Colors.grey[600]),
         const SizedBox(width: 8),
-        Text(
-          text,
-          style: TextStyle(
-            fontSize: 14,
-            color: Colors.grey[600],
-          ),
-        ),
+        Text(text, style: TextStyle(fontSize: 14, color: Colors.grey[600])),
       ],
     );
   }
@@ -159,7 +149,7 @@ class BookingCardSs extends StatelessWidget {
   Widget _buildStatusChip() {
     Color backgroundColor;
     String statusText;
-    
+
     switch (status) {
       case BookingStatus.confirmed:
         backgroundColor = Colors.green.withOpacity(0.1);
@@ -174,7 +164,7 @@ class BookingCardSs extends StatelessWidget {
         statusText = 'cancelled';
         break;
     }
-    
+
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
@@ -184,9 +174,10 @@ class BookingCardSs extends StatelessWidget {
       child: Text(
         statusText,
         style: TextStyle(
-          color: status == BookingStatus.confirmed
-              ? Colors.green
-              : status == BookingStatus.pending
+          color:
+              status == BookingStatus.confirmed
+                  ? Colors.green
+                  : status == BookingStatus.pending
                   ? Colors.amber[800]
                   : Colors.red,
           fontSize: 12,

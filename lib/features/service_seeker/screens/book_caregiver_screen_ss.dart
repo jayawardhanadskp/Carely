@@ -426,7 +426,7 @@ class _BookCaregiverScreenSsState extends State<BookCaregiverScreenSs> {
                         _selectedServiceType != null) {
                       final booking = Booking(
                         caregiverId: caregiver.id ?? '',
-                        seekerId: seekerId, 
+                        seekerId: seekerId,
                         date: _selectedDate!,
                         time: _selectedTime!,
                         serviceType: _selectedServiceType!,

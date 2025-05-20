@@ -6,10 +6,7 @@ class BookingDetailsScreenSs extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        title: const Text('Booking Details'),
-      ),
+      appBar: AppBar(centerTitle: true, title: const Text('Booking Details')),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
@@ -43,7 +40,9 @@ class BookingDetailsScreenSs extends StatelessWidget {
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
                                 image: DecorationImage(
-                                  image: AssetImage('assets/images/caregiver.jpg'),
+                                  image: AssetImage(
+                                    'assets/images/caregiver.jpg',
+                                  ),
                                   fit: BoxFit.cover,
                                 ),
                               ),
@@ -51,7 +50,10 @@ class BookingDetailsScreenSs extends StatelessWidget {
                             Positioned(
                               bottom: 0,
                               child: Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 8,
+                                  vertical: 2,
+                                ),
                                 decoration: BoxDecoration(
                                   color: Colors.orange,
                                   borderRadius: BorderRadius.circular(10),
@@ -75,7 +77,8 @@ class BookingDetailsScreenSs extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   const Text(
                                     'Emma Johnson',
@@ -130,10 +133,7 @@ class BookingDetailsScreenSs extends StatelessWidget {
               // Booking Details Section
               const Text(
                 'Booking Details',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 16),
               Container(
@@ -155,22 +155,25 @@ class BookingDetailsScreenSs extends StatelessWidget {
                     const SizedBox(height: 16),
                     _buildInfoRow(Icons.access_time, '2:00 PM - 5:00 PM'),
                     const SizedBox(height: 16),
-                    _buildInfoRow(Icons.location_on, '123 Home Street, City, State'),
+                    _buildInfoRow(
+                      Icons.location_on,
+                      '123 Home Street, City, State',
+                    ),
                     const SizedBox(height: 16),
                     Row(
                       children: [
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 4,
+                          ),
                           decoration: BoxDecoration(
                             color: Colors.green.withOpacity(0.1),
                             borderRadius: BorderRadius.circular(15),
                           ),
                           child: const Text(
                             'confirmed',
-                            style: TextStyle(
-                              color: Colors.green,
-                              fontSize: 12,
-                            ),
+                            style: TextStyle(color: Colors.green, fontSize: 12),
                           ),
                         ),
                       ],
@@ -182,10 +185,7 @@ class BookingDetailsScreenSs extends StatelessWidget {
               // Service Details Section
               const Text(
                 'Service Details',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 16),
               Container(
@@ -208,9 +208,7 @@ class BookingDetailsScreenSs extends StatelessWidget {
                       children: const [
                         Text(
                           'Standard Care Package',
-                          style: TextStyle(
-                            fontSize: 16,
-                          ),
+                          style: TextStyle(fontSize: 16),
                         ),
                         Text(
                           '\$85',
@@ -264,10 +262,7 @@ class BookingDetailsScreenSs extends StatelessWidget {
                   children: [
                     Row(
                       children: [
-                        Icon(
-                          Icons.credit_card,
-                          color: Colors.grey[600],
-                        ),
+                        Icon(Icons.credit_card, color: Colors.grey[600]),
                         const SizedBox(width: 10),
                         Text(
                           'Visa ending in 4242',
@@ -280,18 +275,11 @@ class BookingDetailsScreenSs extends StatelessWidget {
                     ),
                     Row(
                       children: const [
-                        Icon(
-                          Icons.check_circle,
-                          color: Colors.green,
-                          size: 16,
-                        ),
+                        Icon(Icons.check_circle, color: Colors.green, size: 16),
                         SizedBox(width: 4),
                         Text(
                           'Paid',
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: Colors.green,
-                          ),
+                          style: TextStyle(fontSize: 14, color: Colors.green),
                         ),
                       ],
                     ),
@@ -302,38 +290,22 @@ class BookingDetailsScreenSs extends StatelessWidget {
           ),
         ),
       ),
-      
     );
   }
 
   Widget _buildServiceChip(String label, Color color) {
     return Container(
       margin: const EdgeInsets.only(top: 8),
-      child: Text(
-        label,
-        style: TextStyle(
-          color: color,
-          fontSize: 14,
-        ),
-      ),
+      child: Text(label, style: TextStyle(color: color, fontSize: 14)),
     );
   }
 
   Widget _buildInfoRow(IconData icon, String text) {
     return Row(
       children: [
-        Icon(
-          icon,
-          color: Colors.grey[600],
-          size: 20,
-        ),
+        Icon(icon, color: Colors.grey[600], size: 20),
         const SizedBox(width: 12),
-        Text(
-          text,
-          style: const TextStyle(
-            fontSize: 16,
-          ),
-        ),
+        Text(text, style: const TextStyle(fontSize: 16)),
       ],
     );
   }
