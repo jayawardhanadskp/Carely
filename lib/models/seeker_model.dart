@@ -10,6 +10,7 @@ class SeekerProfile {
   final String location;
   final String? profileImageUrl;
   final DateTime? registrationTimestamp;
+  final List<String> bookings;
 
   SeekerProfile({
     this.uid,
@@ -21,6 +22,7 @@ class SeekerProfile {
     required this.location,
     this.profileImageUrl,
     this.registrationTimestamp,
+    this.bookings = const [],
   });
 
   Map<String, dynamic> toMap() {
@@ -34,6 +36,7 @@ class SeekerProfile {
       'location': location,
       'profileImageUrl': profileImageUrl,
       'registrationTimestamp': registrationTimestamp?.millisecondsSinceEpoch,
+      'bookings': bookings,
     };
   }
 
@@ -50,6 +53,7 @@ class SeekerProfile {
       registrationTimestamp: map['registrationTimestamp'] != null
           ? DateTime.fromMillisecondsSinceEpoch(map['registrationTimestamp'])
           : null,
+      bookings: List<String>.from(map['bookings'] ?? []),
     );
   }
 
