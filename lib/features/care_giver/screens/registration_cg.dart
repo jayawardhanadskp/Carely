@@ -472,13 +472,11 @@ class _CaregiverRegistrationScreenState
                           TextSpan(
                             text: 'Terms & Conditions',
                             style: TextStyle(color: Color(0xFF2563EB)),
-                            // Add onTap to navigate to terms and conditions
                           ),
                           TextSpan(text: ' and '),
                           TextSpan(
                             text: 'Privacy Policy',
                             style: TextStyle(color: Color(0xFF2563EB)),
-                            // Add onTap to navigate to privacy policy
                           ),
                         ],
                       ),
