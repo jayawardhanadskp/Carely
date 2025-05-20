@@ -1,20 +1,18 @@
-import 'package:carely/models/caregiver_model.dart';
-import 'package:carely/services/auth_service.dart';
-import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 
-class CaregiverRegistrationScreen extends StatefulWidget {
-  const CaregiverRegistrationScreen({super.key});
+import 'package:carely/models/seeker_model.dart';
+import 'package:carely/services/auth_service.dart';
+import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+
+class RegistrationSs extends StatefulWidget {
+  const RegistrationSs({super.key});
 
   @override
-  _CaregiverRegistrationScreenState createState() =>
-      _CaregiverRegistrationScreenState();
+  State<RegistrationSs> createState() => _RegistrationSsState();
 }
 
-class _CaregiverRegistrationScreenState
-    extends State<CaregiverRegistrationScreen> {
+class _RegistrationSsState extends State<RegistrationSs> {
   final _formKey = GlobalKey<FormState>();
   final _fullNameController = TextEditingController();
   final _emailController = TextEditingController();
@@ -22,13 +20,9 @@ class _CaregiverRegistrationScreenState
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
   String? _selectedGender;
-  final _yearsOfExperienceController = TextEditingController();
-  final _qualificationsController = TextEditingController();
   final _locationController = TextEditingController();
-  final _bioController = TextEditingController();
   bool _agreeTerms = false;
   File? _profileImage;
-  String? _profileImageUrl;
 
   bool _obscurePassword = true;
 
@@ -45,82 +39,58 @@ class _CaregiverRegistrationScreenState
     });
   }
 
-  final AuthService _firebaseService = AuthService();
+  final AuthService _authService = AuthService();
 
-  Future<void> _createAccount() async {
-    if (_formKey.currentState!.validate() && _agreeTerms) {
-      if (_passwordController.text != _confirmPasswordController.text) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Passwords do not match.')),
-        );
-        return;
-      }
-
-      try {
-        // Create the user using Firebase Authentication
-        final UserCredential? userCredential = await _firebaseService
-            .createUserWithEmailAndPassword(
-              _emailController.text.trim(),
-              _passwordController.text.trim(),
-            );
-
-        if (userCredential?.user != null) {
-          String? profileImageUrl;
-          // Upload the profile image if one was selected
-          if (_profileImage != null) {
-            profileImageUrl = await _firebaseService.uploadProfileImage(
-              _profileImage,
-            );
-          }
-
-          // Create a CaregiverProfile object
-          final caregiverProfile = CaregiverProfile(
-            fullName: _fullNameController.text.trim(),
-            email: _emailController.text.trim(),
-            phone: _phoneController.text.trim(),
-            gender: _selectedGender,
-            yearsOfExperience: _yearsOfExperienceController.text.trim(),
-            qualifications: _qualificationsController.text.trim(),
-            location: _locationController.text.trim(),
-            bio: _bioController.text.trim(),
-            profileImageUrl: profileImageUrl,
-            role: 'caregiver',
-          );
-
-          await _firebaseService.saveCaregiverProfile(caregiverProfile);
-
-          print('Account created successfully!');
-
-          Navigator.pushNamed(context, '/caregiver/main');
-        }
-      } on FirebaseAuthException catch (e) {
-        String errorMessage = 'An error occurred while creating your account.';
-        if (e.code == 'weak-password') {
-          errorMessage = 'The password provided is too weak.';
-        } else if (e.code == 'email-already-in-use') {
-          errorMessage = 'The account already exists for that email.';
-        }
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(errorMessage)));
-      } catch (e) {
-        print('Error during account creation: $e');
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Failed to create account. Please try again.'),
-          ),
-        );
-      }
-    } else if (!_agreeTerms) {
+Future<void> _createAccount() async {
+  if (_formKey.currentState!.validate() && _agreeTerms) {
+    if (_passwordController.text != _confirmPasswordController.text) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(
-            'Please agree to the Terms & Conditions and Privacy Policy.',
-          ),
-        ),
+        const SnackBar(content: Text('Passwords do not match.')),
+      );
+      return;
+    }
+
+    try {
+      final userCredential = await _authService.createSeekerUserWithEmailAndPassword(
+        _emailController.text.trim(),
+        _passwordController.text.trim(),
+      );
+
+      String? profileImageUrl;
+      if (_profileImage != null) {
+        profileImageUrl = await _authService.uploadSeekerProfileImage(_profileImage!);
+      }
+
+      final seekerProfile = SeekerProfile(
+        fullName: _fullNameController.text.trim(),
+        email: _emailController.text.trim(),
+        phone: _phoneController.text.trim(),
+        gender: _selectedGender,
+        location: _locationController.text.trim(),
+        profileImageUrl: profileImageUrl,
+        role: 'seeker',
+        registrationTimestamp: DateTime.now(),
+      );
+
+      await _authService.saveSeekerProfile(seekerProfile);
+
+      Navigator.pushNamed(context, '/seeker/main');
+    } catch (e) {
+      print('Error during registration: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Failed to create account.')),
       );
     }
+  } else if (!_agreeTerms) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content:
+            Text('Please agree to the Terms & Conditions and Privacy Policy.'),
+      ),
+    );
   }
+}
+
 
   @override
   Widget build(BuildContext context) {
@@ -128,7 +98,7 @@ class _CaregiverRegistrationScreenState
       appBar: AppBar(
         centerTitle: true,
         automaticallyImplyLeading: false,
-        title: const Text('Caregiver Registration'),
+        title: const Text('Client Registration'),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
@@ -138,13 +108,50 @@ class _CaregiverRegistrationScreenState
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               const Text(
-                'Create your caregiver profile to start accepting bookings.',
+                'Create your care seeker profile to start seeking services.',
                 style: TextStyle(fontSize: 16.0, color: Colors.grey),
               ),
               const SizedBox(height: 20.0),
               const Text(
                 'Account Information',
                 style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 10.0),
+              Center(
+                child: Stack(
+                  children: [
+                    CircleAvatar(
+                      radius: 50,
+                      backgroundImage:
+                          _profileImage != null
+                              ? FileImage(_profileImage!)
+                              : null,
+                      child:
+                          _profileImage == null
+                              ? const Icon(Icons.camera_alt, size: 40)
+                              : null,
+                    ),
+                    Positioned(
+                      bottom: 0,
+                      right: 0,
+                      child: InkWell(
+                        onTap: _pickImage,
+                        child: Container(
+                          padding: const EdgeInsets.all(8.0),
+                          decoration: BoxDecoration(
+                            color: Color(0xFF2563EB),
+                            shape: BoxShape.circle,
+                          ),
+                          child: const Icon(
+                            Icons.upload,
+                            color: Colors.white,
+                            size: 20,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
               const SizedBox(height: 10.0),
               TextFormField(
@@ -288,43 +295,7 @@ class _CaregiverRegistrationScreenState
                 style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 10.0),
-              Center(
-                child: Stack(
-                  children: [
-                    CircleAvatar(
-                      radius: 50,
-                      backgroundImage:
-                          _profileImage != null
-                              ? FileImage(_profileImage!)
-                              : null,
-                      child:
-                          _profileImage == null
-                              ? const Icon(Icons.camera_alt, size: 40)
-                              : null,
-                    ),
-                    Positioned(
-                      bottom: 0,
-                      right: 0,
-                      child: InkWell(
-                        onTap: _pickImage,
-                        child: Container(
-                          padding: const EdgeInsets.all(8.0),
-                          decoration: BoxDecoration(
-                            color: Color(0xFF2563EB),
-                            shape: BoxShape.circle,
-                          ),
-                          child: const Icon(
-                            Icons.upload,
-                            color: Colors.white,
-                            size: 20,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 10.0),
+              
               Row(
                 children: <Widget>[
                   Expanded(
@@ -362,51 +333,13 @@ class _CaregiverRegistrationScreenState
                     ),
                   ),
                   const SizedBox(width: 10.0),
-                  Expanded(
-                    child: TextFormField(
-                      controller: _yearsOfExperienceController,
-                      decoration: const InputDecoration(
-                        labelText: 'Years of Experience',
-                        border: OutlineInputBorder(
-                          borderSide: BorderSide.none,
-                          borderRadius: BorderRadius.all(Radius.circular(10)),
-                        ),
-                        fillColor: Colors.white,
-                        filled: true,
-                      ),
-                      keyboardType: TextInputType.number,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter your years of experience';
-                        }
-                        if (int.tryParse(value) == null) {
-                          return 'Please enter a valid number';
-                        }
-                        return null;
-                      },
-                    ),
-                  ),
+                  
                 ],
               ),
-              const SizedBox(height: 10.0),
-              TextFormField(
-                controller: _qualificationsController,
-                maxLines: 2,
-                decoration: const InputDecoration(
-                  labelText: 'Qualifications',
-                  hintText:
-                      'List your relevant qualifications and certifications',
-                  border: OutlineInputBorder(
-                    borderSide: BorderSide.none,
-                    borderRadius: BorderRadius.all(Radius.circular(10)),
-                  ),
-                  fillColor: Colors.white,
-                  filled: true,
-                ),
-              ),
+              
               const SizedBox(height: 20.0),
               const Text(
-                'Location & Availability',
+                'Location',
                 style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 10.0),
@@ -435,22 +368,7 @@ class _CaregiverRegistrationScreenState
                 'Bio & Description',
                 style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
               ),
-              const SizedBox(height: 10.0),
-              TextFormField(
-                controller: _bioController,
-                maxLines: 3,
-                decoration: const InputDecoration(
-                  labelText: 'About Me',
-                  hintText:
-                      'Tell clients about yourself, your experience, and your caregiving approach',
-                  border: OutlineInputBorder(
-                    borderSide: BorderSide.none,
-                    borderRadius: BorderRadius.all(Radius.circular(10)),
-                  ),
-                  fillColor: Colors.white,
-                  filled: true,
-                ),
-              ),
+              
               const SizedBox(height: 15.0),
               Row(
                 children: <Widget>[
@@ -472,11 +390,13 @@ class _CaregiverRegistrationScreenState
                           TextSpan(
                             text: 'Terms & Conditions',
                             style: TextStyle(color: Color(0xFF2563EB)),
+                            // Add onTap to navigate to terms and conditions
                           ),
                           TextSpan(text: ' and '),
                           TextSpan(
                             text: 'Privacy Policy',
                             style: TextStyle(color: Color(0xFF2563EB)),
+                            // Add onTap to navigate to privacy policy
                           ),
                         ],
                       ),

@@ -1,5 +1,6 @@
 import 'package:carely/features/care_giver/screens/bookings_screen_cg.dart';
 import 'package:carely/features/care_giver/screens/home_screen_cg.dart';
+import 'package:carely/features/care_giver/screens/profile_screen_cg.dart';
 import 'package:carely/features/service_seeker/screens/bookings_screen_ss.dart';
 import 'package:carely/features/service_seeker/screens/home_screen_ss.dart';
 import 'package:carely/features/service_seeker/screens/profile_scree_ss.dart';
@@ -21,10 +22,12 @@ class MainScreenCgState extends State<MainScreenCg> {
     
     // ChatScreen(),
     // ProfileScreen(),
-    HomeScreenCg(),
+    // HomeScreenCg(),
+        Center(child: Text('Chat Screen')),
+
     BookingsScreenCg(),
     Center(child: Text('Chat Screen')),
-    Center(child: Text('Chat Screen')),
+    ProfileScreenCg(),
   ];
 
   void _onTabTapped(int index) {

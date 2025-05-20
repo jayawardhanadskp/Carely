@@ -1,7 +1,30 @@
 import 'package:carely/features/service_seeker/widgets/caregiver_card_widget_ss.dart';
+import 'package:carely/providers/caregivers_list_provider.dart';
+import 'package:carely/providers/seeker_profile_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
-class HomeScreenSs extends StatelessWidget {
+class HomeScreenSs extends StatefulWidget {
+  const HomeScreenSs({super.key});
+
+  @override
+  State<HomeScreenSs> createState() => _HomeScreenSsState();
+}
+
+class _HomeScreenSsState extends State<HomeScreenSs> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<SeekerProfileProvider>(
+        context,
+        listen: false,
+      ).fetchSeekerProfile();
+
+      Provider.of<CaregiversListProvider>(context, listen: false).fetchCaregivers();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -9,31 +32,36 @@ class HomeScreenSs extends StatelessWidget {
         backgroundColor: Colors.transparent,
         automaticallyImplyLeading: false,
         elevation: 0,
-        title: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
+        title: Consumer<SeekerProfileProvider>(
+          builder: (context, snapshot, _) {
+            final profile = snapshot.profile;
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                Row(
+                  children: [
+                    Text(
+                      'Hi, ${profile?.fullName} ',
+                      style: TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                      ),
+                    ),
+                    Text('👋', style: TextStyle(fontSize: 22)),
+                  ],
+                ),
                 Text(
-                  'Hi, Sarah ',
+                  'Welcome back to Carely',
                   style: TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
+                    fontSize: 14,
+                    color: Colors.grey[600],
+                    fontWeight: FontWeight.normal,
                   ),
                 ),
-                Text('👋', style: TextStyle(fontSize: 22)),
               ],
-            ),
-            Text(
-              'Welcome back to Carely',
-              style: TextStyle(
-                fontSize: 14,
-                color: Colors.grey[600],
-                fontWeight: FontWeight.normal,
-              ),
-            ),
-          ],
+            );
+          },
         ),
         actions: [
           Stack(
@@ -61,12 +89,16 @@ class HomeScreenSs extends StatelessWidget {
               ),
             ],
           ),
-          Padding(
-            padding: const EdgeInsets.only(right: 16.0),
-            child: CircleAvatar(
-              radius: 18,
-              backgroundImage: AssetImage('assets/user_avatar.png'),
-            ),
+          Consumer<SeekerProfileProvider>(
+            builder: (context, snapshot, _) {
+              return Padding(
+                padding: const EdgeInsets.only(right: 16.0),
+                child: CircleAvatar(
+                  radius: 18,
+                  backgroundImage: AssetImage(snapshot.profile?.profileImageUrl ?? ''),
+                ),
+              );
+            }
           ),
         ],
       ),
@@ -356,14 +388,42 @@ class HomeScreenSs extends StatelessWidget {
           ],
         ),
         const SizedBox(height: 12),
-        CaregiverCardSs(
-          name: 'Robert Miller',
-          specialty: 'Elderly care specialist',
-          rating: 4.9,
-          onViewProfile: () {
-            Navigator.pushNamed(context, '/seeker/caregiverProView');
-          },
-        ),
+        Consumer<CaregiversListProvider>(
+        builder: (context, provider, _) {
+          if (provider.isLoading) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          if (provider.error != null) {
+            return Center(child: Text(provider.error!));
+          }
+
+          final caregivers = provider.caregivers;
+
+          final caregiversToShow = caregivers.length > 3 ? caregivers.sublist(0, 3) : caregivers;
+
+          return ListView.builder(
+            shrinkWrap: true,
+            physics: NeverScrollableScrollPhysics(),
+            itemCount: caregiversToShow.length,
+            itemBuilder: (context, index) {
+              final caregiver = caregivers[index];
+              return CaregiverCardSs(
+                name: caregiver.fullName,
+                specialty: caregiver.qualifications,
+                rating: 4.8,
+                onViewProfile: () {
+                  Navigator.pushNamed(
+                    context,
+                    '/seeker/caregiverProView',
+                    arguments: caregiver,
+                  );
+                },
+              );
+            },
+          );
+        },
+      ),
       ],
     );
   }

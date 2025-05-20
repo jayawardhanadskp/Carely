@@ -1,66 +1,54 @@
 import 'dart:convert';
 
-class CaregiverProfile {
-  final String? id;
+class SeekerProfile {
+  final String? uid;
   final String role;
   final String fullName;
   final String email;
   final String phone;
   final String? gender;
-  final String yearsOfExperience;
-  final String qualifications;
   final String location;
-  final String bio;
   final String? profileImageUrl;
   final DateTime? registrationTimestamp;
   final List<String> bookings;
 
-  CaregiverProfile({
-    this.id,
+  SeekerProfile({
+    this.uid,
     required this.role,
     required this.fullName,
     required this.email,
     required this.phone,
     this.gender,
-    required this.yearsOfExperience,
-    required this.qualifications,
     required this.location,
-    required this.bio,
     this.profileImageUrl,
     this.registrationTimestamp,
-    this.bookings = const [], // default empty
+    this.bookings = const [],
   });
 
   Map<String, dynamic> toMap() {
     return {
-      'id': id,
+      'uid': uid,
       'role': role,
       'fullName': fullName,
       'email': email,
       'phone': phone,
       'gender': gender,
-      'yearsOfExperience': yearsOfExperience,
-      'qualifications': qualifications,
       'location': location,
-      'bio': bio,
       'profileImageUrl': profileImageUrl,
       'registrationTimestamp': registrationTimestamp?.millisecondsSinceEpoch,
       'bookings': bookings,
     };
   }
 
-  factory CaregiverProfile.fromMap(Map<String, dynamic> map) {
-    return CaregiverProfile(
-      id: map['id'],
+  factory SeekerProfile.fromMap(Map<String, dynamic> map) {
+    return SeekerProfile(
+      uid: map['uid'],
       role: map['role'],
       fullName: map['fullName'],
       email: map['email'],
       phone: map['phone'],
       gender: map['gender'],
-      yearsOfExperience: map['yearsOfExperience'],
-      qualifications: map['qualifications'],
       location: map['location'],
-      bio: map['bio'],
       profileImageUrl: map['profileImageUrl'],
       registrationTimestamp: map['registrationTimestamp'] != null
           ? DateTime.fromMillisecondsSinceEpoch(map['registrationTimestamp'])
@@ -70,6 +58,6 @@ class CaregiverProfile {
   }
 
   String toJson() => json.encode(toMap());
-  factory CaregiverProfile.fromJson(String source) =>
-      CaregiverProfile.fromMap(json.decode(source));
+  factory SeekerProfile.fromJson(String source) =>
+      SeekerProfile.fromMap(json.decode(source));
 }
