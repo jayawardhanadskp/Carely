@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:carely/providers/caregiver_profile_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -37,7 +39,7 @@ class _ProfileScreenCgState extends State<ProfileScreenCg> {
           }
 
           final profile = provider.profile;
-          print(profile?.profileImageUrl ?? 'No image URL');
+          // print(profile?.profileImageUrl ?? 'No image URL');
 
           if (profile == null) {
             return const Center(child: Text("Profile not found"));
@@ -393,79 +395,6 @@ class _ProfileScreenCgState extends State<ProfileScreenCg> {
     );
   }
 
-  Widget _buildDayButton(String day, bool isSelected) {
-    return Container(
-      width: 60,
-      height: 40,
-      decoration: BoxDecoration(
-        color: isSelected ? Color(0xFF3B82F6) : Colors.transparent,
-        borderRadius: BorderRadius.circular(20),
-        border: isSelected ? null : Border.all(color: Color(0xFF3B82F6)),
-      ),
-      child: Center(
-        child: Text(
-          day,
-          style: TextStyle(
-            color: isSelected ? Colors.white : Colors.blue,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-      ),
-    );
-  }
 
-  Widget _buildTimeButton(String time) {
-    return Container(
-      width: 150,
-      padding: const EdgeInsets.symmetric(vertical: 12),
-      decoration: BoxDecoration(
-        border: Border.all(color: Color(0xFF3B82F6)),
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: Text(
-        time,
-        style: const TextStyle(
-          color: Color(0xFF3B82F6),
-          fontWeight: FontWeight.bold,
-        ),
-        textAlign: TextAlign.center,
-      ),
-    );
-  }
 
-  Widget _buildReviewItem(
-    String name,
-    int rating,
-    String comment,
-    String time,
-  ) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              name,
-              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-            ),
-            Row(
-              children: List.generate(5, (index) {
-                return Icon(
-                  index < rating ? Icons.star : Icons.star_border,
-                  color: Colors.amber,
-                  size: 16,
-                );
-              }),
-            ),
-          ],
-        ),
-        const SizedBox(height: 8),
-        Text(comment, style: TextStyle(fontSize: 14, color: Colors.grey[700])),
-        const SizedBox(height: 4),
-        Text(time, style: TextStyle(fontSize: 12, color: Colors.grey[500])),
-        const SizedBox(height: 8),
-      ],
-    );
-  }
 }

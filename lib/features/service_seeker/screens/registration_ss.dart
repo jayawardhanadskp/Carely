@@ -34,7 +34,6 @@ class _RegistrationSsState extends State<RegistrationSs> {
       if (pickedFile != null) {
         _profileImage = File(pickedFile.path);
       } else {
-        print('No image selected.');
       }
     });
   }
@@ -51,11 +50,6 @@ class _RegistrationSsState extends State<RegistrationSs> {
       }
 
       try {
-        final userCredential = await _authService
-            .createSeekerUserWithEmailAndPassword(
-              _emailController.text.trim(),
-              _passwordController.text.trim(),
-            );
 
         String? profileImageUrl;
         if (_profileImage != null) {
@@ -79,7 +73,6 @@ class _RegistrationSsState extends State<RegistrationSs> {
 
         Navigator.pushNamed(context, '/seeker/main');
       } catch (e) {
-        print('Error during registration: $e');
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Failed to create account.')),
         );
@@ -432,7 +425,7 @@ class _RegistrationSsState extends State<RegistrationSs> {
                   const Text('Already have an account?'),
                   TextButton(
                     onPressed: () {
-                      Navigator.pushNamed(context, '/caregiver/login');
+                      Navigator.pushNamed(context, '/login');
                     },
                     child: const Text(
                       'Log In',

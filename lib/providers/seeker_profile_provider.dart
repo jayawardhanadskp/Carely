@@ -26,7 +26,7 @@ class SeekerProfileProvider extends ChangeNotifier {
         }
       }
     } catch (e) {
-      print("Error fetching seeker profile: $e");
+      // print("Error fetching seeker profile: $e");
     }
 
     _isLoading = false;
@@ -43,7 +43,7 @@ class SeekerProfileProvider extends ChangeNotifier {
         _profile = SeekerProfile.fromMap(doc.data()!);
       }
     } catch (e) {
-      print("Error fetching seeker profile: $e");
+      // print("Error fetching seeker profile: $e");
     }
 
     _isLoading = false;

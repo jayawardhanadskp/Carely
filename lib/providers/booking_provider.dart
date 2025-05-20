@@ -7,7 +7,7 @@ class BookingProvider with ChangeNotifier {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirestoreService _firestoreService = FirestoreService();
 
-  List<Booking> _bookings = [];
+  final List<Booking> _bookings = [];
 
   List<Booking> get bookings => _bookings;
 

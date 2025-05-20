@@ -1,6 +1,7 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:carely/models/booking_model.dart';
 import 'package:carely/models/review_model.dart';
-import 'package:carely/models/seeker_model.dart';
 import 'package:carely/providers/caregiver_profile_provider.dart';
 import 'package:carely/providers/seeker_profile_provider.dart';
 import 'package:flutter/material.dart';
@@ -79,7 +80,6 @@ class _HomeScreenCgState extends State<HomeScreenCg> {
         });
       }
     } catch (e) {
-      print('Error fetching bookings: $e');
       setState(() {
         _isLoading = false;
       });
@@ -531,11 +531,7 @@ class _HomeScreenCgState extends State<HomeScreenCg> {
                               .doc(booking.seekerId)
                               .get(),
                       builder: (context, snapshot) {
-                        String address = 'Address not available';
                         if (snapshot.hasData && snapshot.data!.exists) {
-                          final data =
-                              snapshot.data!.data() as Map<String, dynamic>;
-                          address = data['address'] ?? 'Address not available';
                         }
                         return Text(
                           clientAddress,
@@ -675,11 +671,7 @@ class _HomeScreenCgState extends State<HomeScreenCg> {
                               .doc(request.seekerId)
                               .get(),
                       builder: (context, snapshot) {
-                        String address = 'Address not available';
                         if (snapshot.hasData && snapshot.data!.exists) {
-                          final data =
-                              snapshot.data!.data() as Map<String, dynamic>;
-                          address = data['address'] ?? 'Address not available';
                         }
                         return Text(
                           clientAddress,
@@ -756,7 +748,6 @@ class _HomeScreenCgState extends State<HomeScreenCg> {
       // Refresh bookings after status update
       _fetchBookings();
     } catch (e) {
-      print('Error updating booking status: $e');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Failed to update booking status')),
       );

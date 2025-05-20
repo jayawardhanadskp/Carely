@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:carely/features/service_seeker/widgets/caregiver_card_widget_ss.dart';
 import 'package:carely/models/caregiver_model.dart';
 import 'package:carely/providers/caregivers_list_provider.dart';
@@ -45,7 +47,7 @@ class _HomeScreenSsState extends State<HomeScreenSs> {
         return CaregiverProfile.fromMap(doc.data()!);
       }
     } catch (e) {
-      print("Error fetching caregiver profile: $e");
+      // print("Error fetching caregiver profile: $e");
     }
     return null;
   }
@@ -181,7 +183,6 @@ class _HomeScreenSsState extends State<HomeScreenSs> {
             }
 
             if (snapshot.hasError) {
-              print(snapshot.error);
               return Center(child: Text('Error: ${snapshot.error}'));
             }
 

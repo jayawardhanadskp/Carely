@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:carely/services/auth_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -57,7 +59,6 @@ class _LoginScreenState extends State<LoginScreen> {
           context,
         ).showSnackBar(SnackBar(content: Text(message)));
       } catch (e) {
-        print('Login error: $e');
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('An unexpected error occurred.')),
         );
@@ -96,7 +97,6 @@ class _LoginScreenState extends State<LoginScreen> {
                       context,
                       '/caregiver/register',
                     ); // Go to caregiver
-                    print('Caregiver button pressed');
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: lightBlue,
@@ -145,7 +145,6 @@ class _LoginScreenState extends State<LoginScreen> {
                       context,
                       '/seeker/register',
                     ); // Go to client
-                    print('Client button pressed');
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: lightGreen,
@@ -192,18 +191,45 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    const Color primaryBlue = Color(0xFF2563EB);
+    
+    const Color darkGrey = Color(0xFF6B7280);
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
         automaticallyImplyLeading: false,
         title: const Text('Caregiver Login'),
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
+      body: Form(
+        key: _formKey,
+        child: Padding(
+          padding: const EdgeInsets.all(10.0),
           child: Column(
             children: <Widget>[
+              SvgPicture.asset('assets/svg/logo.svg', height: 80, width: 80),
+          const SizedBox(height: 16),
+          // Carely Text
+          const Text(
+            'Carely',
+            style: TextStyle(
+              fontSize: 48,
+              fontWeight: FontWeight.bold,
+              color: primaryBlue,
+            ),
+          ),
+          const SizedBox(height: 8),
+          // Tagline
+          const Text(
+            "We're here to make it better",
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.normal,
+              color: darkGrey,
+              fontStyle: FontStyle.italic,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 40),
               const Text(
                 'Welcome back! Log in to continue.',
                 style: TextStyle(fontSize: 16.0, color: Colors.grey),

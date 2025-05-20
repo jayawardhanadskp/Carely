@@ -1,3 +1,5 @@
+// ignore_for_file: library_private_types_in_public_api
+
 import 'package:carely/models/caregiver_model.dart';
 import 'package:carely/services/auth_service.dart';
 import 'package:flutter/material.dart';
@@ -28,7 +30,6 @@ class _CaregiverRegistrationScreenState
   final _bioController = TextEditingController();
   bool _agreeTerms = false;
   File? _profileImage;
-  String? _profileImageUrl;
 
   bool _obscurePassword = true;
 
@@ -40,7 +41,7 @@ class _CaregiverRegistrationScreenState
       if (pickedFile != null) {
         _profileImage = File(pickedFile.path);
       } else {
-        print('No image selected.');
+        // print('No image selected.');
       }
     });
   }
@@ -89,7 +90,6 @@ class _CaregiverRegistrationScreenState
 
           await _firebaseService.saveCaregiverProfile(caregiverProfile);
 
-          print('Account created successfully!');
 
           Navigator.pushNamed(context, '/caregiver/main');
         }
@@ -104,7 +104,6 @@ class _CaregiverRegistrationScreenState
           context,
         ).showSnackBar(SnackBar(content: Text(errorMessage)));
       } catch (e) {
-        print('Error during account creation: $e');
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Failed to create account. Please try again.'),
@@ -510,7 +509,7 @@ class _CaregiverRegistrationScreenState
                   const Text('Already have an account?'),
                   TextButton(
                     onPressed: () {
-                      Navigator.pushNamed(context, '/caregiver/login');
+                      Navigator.pushNamed(context, '/login');
                     },
                     child: const Text(
                       'Log In',
