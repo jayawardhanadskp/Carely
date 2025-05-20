@@ -1,0 +1,56 @@
+name: Flutter CI/CD
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  Build_Android:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v1
+        with:
+            java-version: "17.x"
+
+      - name: Setup Flutter
+        uses: subosito/Flutter-action@v2
+        with:
+            channel: stable
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Build APK
+        run: flutter build apk --release
+
+      - name: List build folder (for debugging)
+        run: ls -al build/app/outputs/flutter-apk/
+
+      - name: Upload Android APK as Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-release
+          path: build/app/outputs/flutter-apk/app-release.apk
+
+      - name: Upload APK to Github Release
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: build/app/outputs/flutter-apk/app-release.apk
+          token: ${{ secrets.TOKEN }}
+          tag: v0.0.1-${{ github.run_number }}
+          name: Release v1.0.0
+          body: |
+            This is an automatically generated release for the **${{ github.ref_name }}** branch.
+          draft: false
+          prerelease: false
+
+
