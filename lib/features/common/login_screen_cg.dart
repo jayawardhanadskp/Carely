@@ -2,15 +2,16 @@ import 'package:carely/services/auth_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_svg/svg.dart';
 
-class LoginScreenCg extends StatefulWidget {
-  const LoginScreenCg({super.key});
+class LoginScreen extends StatefulWidget {
+  const LoginScreen({super.key});
 
   @override
-  State<LoginScreenCg> createState() => _LoginScreenCgState();
+  State<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _LoginScreenCgState extends State<LoginScreenCg> {
+class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
@@ -40,7 +41,7 @@ class _LoginScreenCgState extends State<LoginScreenCg> {
       if (caregiverDoc.exists) {
         Navigator.pushReplacementNamed(context, '/caregiver/main');
       } else if (seekerDoc.exists) {
-        Navigator.pushReplacementNamed(context, '/seeker/home');
+        Navigator.pushReplacementNamed(context, '/seeker/main');
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('No matching user profile found.')),
@@ -66,6 +67,124 @@ class _LoginScreenCgState extends State<LoginScreenCg> {
     }
   }
 }
+
+
+void _showUserTypeDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        // Define colors here or use your custom color file
+        const Color primaryBlue = Color(0xFF2563EB);
+        const Color primaryGreen = Color(0xFF16A34A);
+        const Color lightBlue = Color(0xFFE0F2FE); // For the caregiver button
+        const Color lightGreen = Color(0xFFE6F4EA); // For the client button
+        const Color darkGrey = Color(0xFF6B7280);
+
+        return AlertDialog(
+          title: const Text('Choose Your Role'),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // I'm a Caregiver Button
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.of(context).pop(); // Close the dialog
+                    Navigator.pushNamed(context, '/caregiver/register'); // Go to caregiver
+                    print('Caregiver button pressed');
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: lightBlue,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  child: Column(
+                    children: [
+                      SvgPicture.asset(
+                        'assets/svg/caregiver.svg', 
+                        height: 32,
+                        width: 32,
+                        color: primaryBlue,
+                      ),
+                      const SizedBox(height: 8),
+                      const Text(
+                        "I'm a Caregiver",
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: primaryBlue,
+                        ),
+                      ),
+                      const Text(
+                        "Join as a professional caregiver",
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.normal,
+                          color: darkGrey,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+              // I'm a Client Button
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.of(context).pop(); // Close the dialog
+                    Navigator.pushNamed(context, '/seeker/register'); // Go to client
+                    print('Client button pressed');
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: lightGreen,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  child: Column(
+                    children: [
+                      SvgPicture.asset(
+                        'assets/svg/client.svg', 
+                        height: 32,
+                        width: 32,
+                        color: primaryGreen,
+                      ),
+                      const SizedBox(height: 8),
+                      const Text(
+                        "I'm a Client",
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: primaryGreen,
+                        ),
+                      ),
+                      const Text(
+                        "Find care for you or a loved one",
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.normal,
+                          color: darkGrey,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
 
 
   @override
@@ -169,7 +288,7 @@ class _LoginScreenCgState extends State<LoginScreenCg> {
                   const Text('Don\'t have an account?'),
                   TextButton(
                     onPressed: () {
-                      Navigator.pushReplacementNamed(context, '/register');
+                      _showUserTypeDialog(context);
                     },
                     child: const Text(
                       'Register',

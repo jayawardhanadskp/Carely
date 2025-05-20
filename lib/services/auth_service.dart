@@ -106,7 +106,7 @@ class AuthService {
     final user = _auth.currentUser;
     if (user == null) throw Exception("User not logged in.");
 
-    final ref = _storage.ref().child('seekers/${user.uid}/profile.jpg');
+    final ref = _storage.ref().child('seekers_profiles/${user.uid}/profile.jpg');
     await ref.putFile(imageFile);
     return await ref.getDownloadURL();
   }
