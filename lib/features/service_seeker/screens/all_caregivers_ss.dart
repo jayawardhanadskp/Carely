@@ -49,6 +49,7 @@ class _AllCaregiversListScreenSsState extends State<AllCaregiversListScreenSs> {
               final caregiver = caregivers[index];
               return CaregiverCardSs(
                 name: caregiver.fullName,
+                imageUrl: caregiver.profileImageUrl,
                 specialty: caregiver.qualifications,
                 rating: 4.8,
                 onViewProfile: () {

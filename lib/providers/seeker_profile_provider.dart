@@ -32,4 +32,21 @@ class SeekerProfileProvider extends ChangeNotifier {
     _isLoading = false;
     notifyListeners();
   }
+
+  Future<void> fetchSeekerProfileById(String id) async {
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      final doc = await _firestore.collection('seekers').doc(id).get();
+      if (doc.exists) {
+        _profile = SeekerProfile.fromMap(doc.data()!);
+      }
+    } catch (e) {
+      print("Error fetching seeker profile: $e");
+    }
+
+    _isLoading = false;
+    notifyListeners();
+  }
 }

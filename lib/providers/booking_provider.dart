@@ -13,35 +13,43 @@ class BookingProvider with ChangeNotifier {
 
   // Fetch bookings
   Stream<List<Booking>> getBookings() {
-  return _firestore
-    .collection('bookings')
-    .snapshots()
-    .map((snapshot) =>
-        snapshot.docs.map((doc) => Booking.fromMap(doc.data())).toList());
-}
+    return _firestore
+        .collection('bookings')
+        .snapshots()
+        .map(
+          (snapshot) =>
+              snapshot.docs.map((doc) => Booking.fromMap(doc.data())).toList(),
+        );
+  }
 
-Stream<List<Booking>> getBookingsByStatus(String caregiverId, String status) {
+  Stream<List<Booking>> getBookingsByStatus(String caregiverId, String status) {
     return _firestore
         .collection('bookings')
         .where('caregiverId', isEqualTo: caregiverId)
         .where('status', isEqualTo: status)
         .snapshots()
         .map((snapshot) {
-      return snapshot.docs
-          .map((doc) => Booking.fromMap(doc.data()))
-          .toList();
-    });
+          return snapshot.docs
+              .map((doc) => Booking.fromMap(doc.data()))
+              .toList();
+        });
   }
 
+  Stream<List<Booking>> getBookingsForSeeker(String seekerId) {
+    return _firestore
+        .collection('bookings')
+        .where('seekerId', isEqualTo: seekerId)
+        .snapshots()
+        .map((snapshot) {
+          return snapshot.docs
+              .map((doc) => Booking.fromMap(doc.data()))
+              .toList();
+        });
+  }
 
   // Add a new booking
   Future<void> addBooking(Booking booking) async {
     await _firestoreService.addBooking(booking);
-    getBookings(); 
-  }
-
-  // Update a profile's bookings
-  Future<void> updateProfileBookings(String uid, List<String> bookingIds) async {
-    await _firestoreService.updateProfileBookings(uid, bookingIds);
+    getBookings();
   }
 }

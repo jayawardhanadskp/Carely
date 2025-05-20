@@ -9,13 +9,15 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   @override
-void initState() {
-  super.initState();
-  WidgetsBinding.instance.addPostFrameCallback((_) {
-    Provider.of<SeekerProfileProvider>(context, listen: false).fetchSeekerProfile();
-  });
-}
-
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<SeekerProfileProvider>(
+        context,
+        listen: false,
+      ).fetchSeekerProfile();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +38,14 @@ void initState() {
           appBar: AppBar(
             centerTitle: true,
             automaticallyImplyLeading: false,
-            title: const Text('Profile', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black)),
+            title: const Text(
+              'Profile',
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
+              ),
+            ),
             backgroundColor: Colors.transparent,
             elevation: 0,
             actions: [
@@ -52,10 +61,18 @@ void initState() {
               _buildProfileHeader(profile),
               const SizedBox(height: 24),
               _buildProfileSection('Personal Information'),
-              _buildProfileItem(Icons.person_outline, 'Full Name', profile.fullName),
+              _buildProfileItem(
+                Icons.person_outline,
+                'Full Name',
+                profile.fullName,
+              ),
               _buildProfileItem(Icons.email_outlined, 'Email', profile.email),
               _buildProfileItem(Icons.phone_outlined, 'Phone', profile.phone),
-              _buildProfileItem(Icons.location_on_outlined, 'Address', profile.location),
+              _buildProfileItem(
+                Icons.location_on_outlined,
+                'Address',
+                profile.location,
+              ),
               const SizedBox(height: 24),
               _buildProfileSection('App Settings'),
               _buildToggleItem('Notifications', true),
@@ -76,9 +93,10 @@ void initState() {
           CircleAvatar(
             radius: 50,
             backgroundColor: Colors.grey[200],
-            backgroundImage: profile.profileImageUrl != null
-                ? NetworkImage(profile.profileImageUrl!)
-                : AssetImage('assets/user_avatar.png') as ImageProvider,
+            backgroundImage:
+                profile.profileImageUrl != null
+                    ? NetworkImage(profile.profileImageUrl!)
+                    : AssetImage('assets/user_avatar.png') as ImageProvider,
           ),
           const SizedBox(height: 16),
           Text(
@@ -93,7 +111,9 @@ void initState() {
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.blue,
               foregroundColor: Colors.white,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
             ),
           ),
@@ -103,12 +123,16 @@ void initState() {
   }
 
   Widget _buildProfileSection(String title) => Padding(
-        padding: const EdgeInsets.only(bottom: 16.0),
-        child: Text(
-          title,
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.grey[800]),
-        ),
-      );
+    padding: const EdgeInsets.only(bottom: 16.0),
+    child: Text(
+      title,
+      style: TextStyle(
+        fontSize: 18,
+        fontWeight: FontWeight.bold,
+        color: Colors.grey[800],
+      ),
+    ),
+  );
 
   Widget _buildProfileItem(IconData icon, String label, String value) {
     return Container(
@@ -117,7 +141,13 @@ void initState() {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
-        boxShadow: [BoxShadow(color: Colors.grey.withOpacity(0.1), blurRadius: 5, offset: Offset(0, 2))],
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.1),
+            blurRadius: 5,
+            offset: Offset(0, 2),
+          ),
+        ],
       ),
       child: Row(
         children: [
@@ -126,9 +156,18 @@ void initState() {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(label, style: TextStyle(fontSize: 14, color: Colors.grey[600])),
+              Text(
+                label,
+                style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+              ),
               const SizedBox(height: 4),
-              Text(value, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
+              Text(
+                value,
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
             ],
           ),
           const Spacer(),
@@ -145,13 +184,26 @@ void initState() {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
-        boxShadow: [BoxShadow(color: Colors.grey.withOpacity(0.1), blurRadius: 5, offset: Offset(0, 2))],
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.1),
+            blurRadius: 5,
+            offset: Offset(0, 2),
+          ),
+        ],
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(label, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
-          Switch(value: initialValue, onChanged: (value) {}, activeColor: Colors.blue),
+          Text(
+            label,
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+          ),
+          Switch(
+            value: initialValue,
+            onChanged: (value) {},
+            activeColor: Colors.blue,
+          ),
         ],
       ),
     );
@@ -166,10 +218,19 @@ void initState() {
         },
         style: TextButton.styleFrom(
           padding: const EdgeInsets.symmetric(vertical: 16),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
           backgroundColor: Colors.red.withOpacity(0.1),
         ),
-        child: const Text('Log Out', style: TextStyle(color: Colors.red, fontSize: 16, fontWeight: FontWeight.w500)),
+        child: const Text(
+          'Log Out',
+          style: TextStyle(
+            color: Colors.red,
+            fontSize: 16,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
       ),
     );
   }

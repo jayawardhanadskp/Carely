@@ -18,14 +18,14 @@ class CaregiversListProvider with ChangeNotifier {
     notifyListeners();
 
     try {
-      final snapshot = await FirebaseFirestore.instance
-          .collection('caregivers')
-          .get();
+      final snapshot =
+          await FirebaseFirestore.instance.collection('caregivers').get();
 
-      _caregivers = snapshot.docs.map((doc) {
-        final data = doc.data();
-        return CaregiverProfile.fromMap(data,);
-      }).toList();
+      _caregivers =
+          snapshot.docs.map((doc) {
+            final data = doc.data();
+            return CaregiverProfile.fromMap(data);
+          }).toList();
     } catch (e) {
       _error = 'Failed to load caregivers. Please try again.';
       debugPrint('Error fetching caregivers: $e');

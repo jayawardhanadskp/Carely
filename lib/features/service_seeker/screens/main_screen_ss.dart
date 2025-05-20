@@ -14,12 +14,12 @@ class MainScreenSs extends StatefulWidget {
 
 class MainScreenSsState extends State<MainScreenSs> {
   int _currentIndex = 0;
-  
+
   final List<Widget> _screens = [
     HomeScreenSs(),
     BookingsScreenSs(),
     AllCaregiversListScreenSs(),
-    ProfileScreen()
+    ProfileScreen(),
   ];
 
   void _onTabTapped(int index) {

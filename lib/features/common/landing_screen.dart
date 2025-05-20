@@ -6,9 +6,6 @@ class LandingScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
-    
-
     // Define colors here or use your custom color file
     const Color primaryBlue = Color(0xFF2563EB);
     const Color primaryGreen = Color(0xFF16A34A);
@@ -25,11 +22,7 @@ class LandingScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             // Heart SVG
-            SvgPicture.asset(
-              'assets/svg/logo.svg', 
-              height: 80,
-              width: 80,
-            ),
+            SvgPicture.asset('assets/svg/logo.svg', height: 80, width: 80),
             const SizedBox(height: 16),
             // Carely Text
             const Text(
@@ -37,7 +30,7 @@ class LandingScreen extends StatelessWidget {
               style: TextStyle(
                 fontSize: 48,
                 fontWeight: FontWeight.bold,
-                color: primaryBlue, 
+                color: primaryBlue,
               ),
             ),
             const SizedBox(height: 8),
@@ -48,7 +41,7 @@ class LandingScreen extends StatelessWidget {
                 fontSize: 18,
                 fontWeight: FontWeight.normal,
                 color: darkGrey,
-                fontStyle: FontStyle.italic
+                fontStyle: FontStyle.italic,
               ),
               textAlign: TextAlign.center,
             ),
@@ -71,8 +64,7 @@ class LandingScreen extends StatelessWidget {
                 child: Column(
                   children: [
                     SvgPicture.asset(
-                     
-                     'assets/svg/caregiver.svg', 
+                      'assets/svg/caregiver.svg',
                       height: 32,
                       width: 32,
                       color: primaryBlue,
@@ -118,7 +110,7 @@ class LandingScreen extends StatelessWidget {
                 child: Column(
                   children: [
                     SvgPicture.asset(
-                      'assets/svg/client.svg', 
+                      'assets/svg/client.svg',
                       height: 32,
                       width: 32,
                       color: primaryGreen,

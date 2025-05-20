@@ -26,10 +26,9 @@ class _ProfileScreenCgState extends State<ProfileScreenCg> {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        
+
         centerTitle: true,
         title: const Text('Your Profile'),
-        
       ),
       body: Consumer<CaregiverProfileProvider>(
         builder: (context, provider, _) {
@@ -50,12 +49,14 @@ class _ProfileScreenCgState extends State<ProfileScreenCg> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   CircleAvatar(
-            radius: 80,
-            backgroundColor: Colors.grey[200],
-            backgroundImage: profile.profileImageUrl != null
-                ? NetworkImage(profile.profileImageUrl!)
-                : AssetImage('assets/user_avatar.png') as ImageProvider,
-          ),
+                    radius: 80,
+                    backgroundColor: Colors.grey[200],
+                    backgroundImage:
+                        profile.profileImageUrl != null
+                            ? NetworkImage(profile.profileImageUrl!)
+                            : AssetImage('assets/user_avatar.png')
+                                as ImageProvider,
+                  ),
                   const SizedBox(height: 16),
                   // Name
                   Text(

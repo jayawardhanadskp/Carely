@@ -9,7 +9,7 @@ class AppRouter {
     // Combine seeker + provider routes
     final allRoutes = {
       '/': (context) => const LandingScreen(),
-      '/login': (context) =>  LoginScreen(),
+      '/login': (context) => LoginScreen(),
       ...seekerRoutes,
       ...caregiverRoutes,
     };
@@ -23,9 +23,8 @@ class AppRouter {
       );
     } else {
       return MaterialPageRoute(
-        builder: (_) => const Scaffold(
-          body: Center(child: Text('Page not found')),
-        ),
+        builder:
+            (_) => const Scaffold(body: Center(child: Text('Page not found'))),
       );
     }
   }

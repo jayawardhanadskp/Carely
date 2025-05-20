@@ -1,21 +1,28 @@
+import 'package:carely/models/booking_model.dart';
+import 'package:carely/models/caregiver_model.dart';
 import 'package:carely/features/service_seeker/widgets/booking_card_widget_ss.dart';
+import 'package:carely/providers/booking_provider.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class BookingsScreenSs extends StatefulWidget {
   @override
   _BookingsScreenSsState createState() => _BookingsScreenSsState();
 }
 
-class _BookingsScreenSsState extends State<BookingsScreenSs> with SingleTickerProviderStateMixin {
+class _BookingsScreenSsState extends State<BookingsScreenSs>
+    with SingleTickerProviderStateMixin {
   late TabController _tabController;
   final List<String> tabs = ['Upcoming', 'Past'];
-  
+
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 2, vsync: this);
+    _tabController = TabController(length: tabs.length, vsync: this);
   }
-  
+
   @override
   void dispose() {
     _tabController.dispose();
@@ -24,6 +31,9 @@ class _BookingsScreenSsState extends State<BookingsScreenSs> with SingleTickerPr
 
   @override
   Widget build(BuildContext context) {
+    final seekerId = FirebaseAuth.instance.currentUser!.uid;
+    final bookingProvider = Provider.of<BookingProvider>(context);
+
     return Scaffold(
       backgroundColor: Colors.grey[50],
       appBar: AppBar(
@@ -53,57 +63,121 @@ class _BookingsScreenSsState extends State<BookingsScreenSs> with SingleTickerPr
                 controller: _tabController,
                 indicator: BoxDecoration(
                   borderRadius: BorderRadius.circular(10),
-                  color: Color(0xFF2563EB),
+                  color: const Color(0xFF2563EB),
                 ),
-                indicatorSize: TabBarIndicatorSize.tab,
                 dividerColor: Colors.transparent,
+                indicatorSize: TabBarIndicatorSize.tab,
                 labelColor: Colors.white,
                 unselectedLabelColor: Colors.grey[600],
-                
                 tabs: tabs.map((String name) => Tab(text: name)).toList(),
               ),
             ),
           ),
         ),
       ),
-      body: TabBarView(
-        controller: _tabController,
-        children: [
-          _buildUpcomingBookings(),
-          _buildPastBookings(),
-        ],
+      body: StreamBuilder<List<Booking>>(
+        stream: bookingProvider.getBookingsForSeeker(seekerId),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(
+              child: Text('Error loading bookings: ${snapshot.error}'),
+            );
+          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+            return const Center(child: Text('No bookings found.'));
+          }
+
+          final allBookings = snapshot.data!;
+          final now = DateTime.now();
+
+          final upcomingBookings =
+              allBookings.where((b) {
+                return (b.date.isBefore(now) || b.date.isAtSameMomentAs(now)) &&
+                    (b.status == 'pending' || b.status == 'confirmed');
+              }).toList();
+
+          final pastBookings =
+              allBookings.where((b) {
+                return (b.date.isAfter(now)) && b.status == 'completed';
+              }).toList();
+
+          return TabBarView(
+            controller: _tabController,
+            children: [
+              _buildBookingList(upcomingBookings),
+              _buildBookingList(pastBookings),
+            ],
+          );
+        },
       ),
     );
   }
 
-  Widget _buildUpcomingBookings() {
-    return ListView(
+  Widget _buildBookingList(List<Booking> bookings) {
+    if (bookings.isEmpty) {
+      return const Center(child: Text('No bookings to show.'));
+    }
+
+    return ListView.separated(
       padding: const EdgeInsets.all(16),
-      children: [
-        BookingCardSs(
-          caregiverName: 'Emma Johnson',
-          caregiverRating: 4.8,
-          date: 'Today',
-          time: '2:00 PM - 5:00 PM',
-          location: 'Home',
-          status: BookingStatus.confirmed,
-        ),
-        const SizedBox(height: 16),
-        BookingCardSs(
-          caregiverName: 'Robert Miller',
-          caregiverRating: 4.9,
-          date: 'Tomorrow',
-          time: '10:00 AM - 1:00 PM',
-          location: 'Home',
-          status: BookingStatus.pending,
-        ),
-      ],
+      itemCount: bookings.length,
+      separatorBuilder: (context, index) => const SizedBox(height: 16),
+      itemBuilder: (context, index) {
+        final booking = bookings[index];
+        return FutureBuilder<CaregiverProfile?>(
+          future: _fetchCaregiverProfileById(booking.caregiverId),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            }
+
+            final caregiver = snapshot.data;
+
+            return BookingCardSs(
+              imageUrl: caregiver?.profileImageUrl ?? '',
+              caregiverName: caregiver?.fullName ?? 'Caregiver',
+              caregiverRating: 4.0,
+              date: booking.date.toLocal().toString().split(' ')[0],
+              time: booking.time,
+              location: 'Home',
+              status: _mapStatusToEnum(booking.status),
+            );
+          },
+        );
+      },
     );
   }
 
-  Widget _buildPastBookings() {
-    return Center(
-      child: Text('No past bookings'),
-    );
+  Future<CaregiverProfile?> _fetchCaregiverProfileById(
+    String caregiverId,
+  ) async {
+    try {
+      final doc =
+          await FirebaseFirestore.instance
+              .collection('caregivers')
+              .doc(caregiverId)
+              .get();
+      if (doc.exists) {
+        return CaregiverProfile.fromMap(doc.data()!);
+      }
+    } catch (e) {
+      print("Error fetching caregiver profile: $e");
+    }
+    return null;
+  }
+
+  BookingStatus _mapStatusToEnum(String status) {
+    switch (status) {
+      case 'confirmed':
+        return BookingStatus.confirmed;
+      case 'pending':
+        return BookingStatus.pending;
+      case 'completed':
+      case 'cancelled':
+        return BookingStatus.cancelled;
+      default:
+        return BookingStatus.pending;
+    }
   }
 }

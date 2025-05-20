@@ -21,55 +21,53 @@ class _LoginScreenState extends State<LoginScreen> {
   final AuthService _authService = AuthService();
 
   Future<void> _login() async {
-  if (_formKey.currentState!.validate()) {
-    setState(() => _isLoading = true);
-    try {
-      final userCredential = await _authService.signInWithEmailAndPassword(
-        _emailController.text.trim(),
-        _passwordController.text.trim(),
-      );
-
-      final uid = userCredential?.user?.uid;
-      if (uid == null) throw Exception('Authentication failed. No user ID.');
-
-      final firestore = FirebaseFirestore.instance;
-      final caregiverDoc =
-          await firestore.collection('caregivers').doc(uid).get();
-      final seekerDoc =
-          await firestore.collection('seekers').doc(uid).get();
-
-      if (caregiverDoc.exists) {
-        Navigator.pushReplacementNamed(context, '/caregiver/main');
-      } else if (seekerDoc.exists) {
-        Navigator.pushReplacementNamed(context, '/seeker/main');
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('No matching user profile found.')),
+    if (_formKey.currentState!.validate()) {
+      setState(() => _isLoading = true);
+      try {
+        final userCredential = await _authService.signInWithEmailAndPassword(
+          _emailController.text.trim(),
+          _passwordController.text.trim(),
         );
+
+        final uid = userCredential?.user?.uid;
+        if (uid == null) throw Exception('Authentication failed. No user ID.');
+
+        final firestore = FirebaseFirestore.instance;
+        final caregiverDoc =
+            await firestore.collection('caregivers').doc(uid).get();
+        final seekerDoc = await firestore.collection('seekers').doc(uid).get();
+
+        if (caregiverDoc.exists) {
+          Navigator.pushReplacementNamed(context, '/caregiver/main');
+        } else if (seekerDoc.exists) {
+          Navigator.pushReplacementNamed(context, '/seeker/main');
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('No matching user profile found.')),
+          );
+        }
+      } on FirebaseAuthException catch (e) {
+        String message = 'Login failed. Please try again.';
+        if (e.code == 'user-not-found') {
+          message = 'No user found for that email.';
+        } else if (e.code == 'wrong-password') {
+          message = 'Incorrect password.';
+        }
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(message)));
+      } catch (e) {
+        print('Login error: $e');
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('An unexpected error occurred.')),
+        );
+      } finally {
+        setState(() => _isLoading = false);
       }
-    } on FirebaseAuthException catch (e) {
-      String message = 'Login failed. Please try again.';
-      if (e.code == 'user-not-found') {
-        message = 'No user found for that email.';
-      } else if (e.code == 'wrong-password') {
-        message = 'Incorrect password.';
-      }
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(message)),
-      );
-    } catch (e) {
-      print('Login error: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('An unexpected error occurred.')),
-      );
-    } finally {
-      setState(() => _isLoading = false);
     }
   }
-}
 
-
-void _showUserTypeDialog(BuildContext context) {
+  void _showUserTypeDialog(BuildContext context) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -94,7 +92,10 @@ void _showUserTypeDialog(BuildContext context) {
                 child: ElevatedButton(
                   onPressed: () {
                     Navigator.of(context).pop(); // Close the dialog
-                    Navigator.pushNamed(context, '/caregiver/register'); // Go to caregiver
+                    Navigator.pushNamed(
+                      context,
+                      '/caregiver/register',
+                    ); // Go to caregiver
                     print('Caregiver button pressed');
                   },
                   style: ElevatedButton.styleFrom(
@@ -107,7 +108,7 @@ void _showUserTypeDialog(BuildContext context) {
                   child: Column(
                     children: [
                       SvgPicture.asset(
-                        'assets/svg/caregiver.svg', 
+                        'assets/svg/caregiver.svg',
                         height: 32,
                         width: 32,
                         color: primaryBlue,
@@ -140,7 +141,10 @@ void _showUserTypeDialog(BuildContext context) {
                 child: ElevatedButton(
                   onPressed: () {
                     Navigator.of(context).pop(); // Close the dialog
-                    Navigator.pushNamed(context, '/seeker/register'); // Go to client
+                    Navigator.pushNamed(
+                      context,
+                      '/seeker/register',
+                    ); // Go to client
                     print('Client button pressed');
                   },
                   style: ElevatedButton.styleFrom(
@@ -153,7 +157,7 @@ void _showUserTypeDialog(BuildContext context) {
                   child: Column(
                     children: [
                       SvgPicture.asset(
-                        'assets/svg/client.svg', 
+                        'assets/svg/client.svg',
                         height: 32,
                         width: 32,
                         color: primaryGreen,
@@ -185,7 +189,6 @@ void _showUserTypeDialog(BuildContext context) {
       },
     );
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -273,12 +276,13 @@ void _showUserTypeDialog(BuildContext context) {
                       borderRadius: BorderRadius.circular(8.0),
                     ),
                   ),
-                  child: _isLoading
-                      ? const CircularProgressIndicator(color: Colors.white)
-                      : const Text(
-                          'Log In',
-                          style: TextStyle(fontSize: 18.0),
-                        ),
+                  child:
+                      _isLoading
+                          ? const CircularProgressIndicator(color: Colors.white)
+                          : const Text(
+                            'Log In',
+                            style: TextStyle(fontSize: 18.0),
+                          ),
                 ),
               ),
               const SizedBox(height: 15.0),

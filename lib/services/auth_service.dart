@@ -90,12 +90,12 @@ class AuthService {
     await _auth.signOut();
   }
 
-
-
   // Seeker Firebase Authentication
 
   Future<UserCredential> createSeekerUserWithEmailAndPassword(
-      String email, String password) async {
+    String email,
+    String password,
+  ) async {
     return await _auth.createUserWithEmailAndPassword(
       email: email,
       password: password,
@@ -106,7 +106,9 @@ class AuthService {
     final user = _auth.currentUser;
     if (user == null) throw Exception("User not logged in.");
 
-    final ref = _storage.ref().child('seekers_profiles/${user.uid}/profile.jpg');
+    final ref = _storage.ref().child(
+      'seekers_profiles/${user.uid}/profile.jpg',
+    );
     await ref.putFile(imageFile);
     return await ref.getDownloadURL();
   }
@@ -117,6 +119,6 @@ class AuthService {
 
     final docRef = _firestore.collection('seekers').doc(user.uid);
     await docRef.set(profile.toMap());
-    await docRef.update({'uid': docRef.id}); 
+    await docRef.update({'uid': docRef.id});
   }
 }

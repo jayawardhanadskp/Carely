@@ -41,56 +41,59 @@ class _RegistrationSsState extends State<RegistrationSs> {
 
   final AuthService _authService = AuthService();
 
-Future<void> _createAccount() async {
-  if (_formKey.currentState!.validate() && _agreeTerms) {
-    if (_passwordController.text != _confirmPasswordController.text) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Passwords do not match.')),
-      );
-      return;
-    }
-
-    try {
-      final userCredential = await _authService.createSeekerUserWithEmailAndPassword(
-        _emailController.text.trim(),
-        _passwordController.text.trim(),
-      );
-
-      String? profileImageUrl;
-      if (_profileImage != null) {
-        profileImageUrl = await _authService.uploadSeekerProfileImage(_profileImage!);
+  Future<void> _createAccount() async {
+    if (_formKey.currentState!.validate() && _agreeTerms) {
+      if (_passwordController.text != _confirmPasswordController.text) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Passwords do not match.')),
+        );
+        return;
       }
 
-      final seekerProfile = SeekerProfile(
-        fullName: _fullNameController.text.trim(),
-        email: _emailController.text.trim(),
-        phone: _phoneController.text.trim(),
-        gender: _selectedGender,
-        location: _locationController.text.trim(),
-        profileImageUrl: profileImageUrl,
-        role: 'seeker',
-        registrationTimestamp: DateTime.now(),
-      );
+      try {
+        final userCredential = await _authService
+            .createSeekerUserWithEmailAndPassword(
+              _emailController.text.trim(),
+              _passwordController.text.trim(),
+            );
 
-      await _authService.saveSeekerProfile(seekerProfile);
+        String? profileImageUrl;
+        if (_profileImage != null) {
+          profileImageUrl = await _authService.uploadSeekerProfileImage(
+            _profileImage!,
+          );
+        }
 
-      Navigator.pushNamed(context, '/seeker/main');
-    } catch (e) {
-      print('Error during registration: $e');
+        final seekerProfile = SeekerProfile(
+          fullName: _fullNameController.text.trim(),
+          email: _emailController.text.trim(),
+          phone: _phoneController.text.trim(),
+          gender: _selectedGender,
+          location: _locationController.text.trim(),
+          profileImageUrl: profileImageUrl,
+          role: 'seeker',
+          registrationTimestamp: DateTime.now(),
+        );
+
+        await _authService.saveSeekerProfile(seekerProfile);
+
+        Navigator.pushNamed(context, '/seeker/main');
+      } catch (e) {
+        print('Error during registration: $e');
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Failed to create account.')),
+        );
+      }
+    } else if (!_agreeTerms) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Failed to create account.')),
+        const SnackBar(
+          content: Text(
+            'Please agree to the Terms & Conditions and Privacy Policy.',
+          ),
+        ),
       );
     }
-  } else if (!_agreeTerms) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content:
-            Text('Please agree to the Terms & Conditions and Privacy Policy.'),
-      ),
-    );
   }
-}
-
 
   @override
   Widget build(BuildContext context) {
@@ -295,7 +298,7 @@ Future<void> _createAccount() async {
                 style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 10.0),
-              
+
               Row(
                 children: <Widget>[
                   Expanded(
@@ -333,10 +336,9 @@ Future<void> _createAccount() async {
                     ),
                   ),
                   const SizedBox(width: 10.0),
-                  
                 ],
               ),
-              
+
               const SizedBox(height: 20.0),
               const Text(
                 'Location',
@@ -368,7 +370,7 @@ Future<void> _createAccount() async {
                 'Bio & Description',
                 style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
               ),
-              
+
               const SizedBox(height: 15.0),
               Row(
                 children: <Widget>[

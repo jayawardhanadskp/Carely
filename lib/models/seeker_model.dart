@@ -50,9 +50,12 @@ class SeekerProfile {
       gender: map['gender'],
       location: map['location'],
       profileImageUrl: map['profileImageUrl'],
-      registrationTimestamp: map['registrationTimestamp'] != null
-          ? DateTime.fromMillisecondsSinceEpoch(map['registrationTimestamp'])
-          : null,
+      registrationTimestamp:
+          map['registrationTimestamp'] != null
+              ? DateTime.fromMillisecondsSinceEpoch(
+                map['registrationTimestamp'],
+              )
+              : null,
       bookings: List<String>.from(map['bookings'] ?? []),
     );
   }

@@ -371,7 +371,7 @@
 //           ),
 //         ),
 //       ),
-      
+
 //     );
 //   }
 
@@ -479,37 +479,12 @@
 //   }
 // }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 // import 'package:carely/models/booking_model.dart';
 // import 'package:carely/providers/booking_provider.dart';
 // import 'package:cloud_firestore/cloud_firestore.dart';
 // import 'package:firebase_auth/firebase_auth.dart';
 // import 'package:flutter/material.dart';
 // import 'package:provider/provider.dart';
-
 
 // class BookingsScreenCg extends StatefulWidget {
 //   const BookingsScreenCg({super.key});
@@ -594,7 +569,7 @@
 //           ),
 //         ],
 //       ),
-      
+
 //     );
 //   }
 
@@ -785,13 +760,11 @@
 //   );
 // }
 
-
-
 //   Widget _buildPendingTab() {
 //     // Sample data for pending requests
 //     final pendingRequests = [
 //       Booking(
-        
+
 //       ),
 //     ];
 
@@ -949,7 +922,7 @@
 //     // Sample data for completed bookings (based on Images 1-2)
 //     final completedBookings = [
 //       Booking(
-       
+
 //     ];
 
 //     return ListView.builder(

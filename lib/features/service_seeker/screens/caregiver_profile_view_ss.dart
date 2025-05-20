@@ -354,7 +354,11 @@ class _CaregiverProfileViewSsState extends State<CaregiverProfileViewSs> {
             ),
           ),
           onPressed: () {
-            Navigator.pushNamed(context, '/seeker/bookingCaregiver', arguments: caregiver,);
+            Navigator.pushNamed(
+              context,
+              '/seeker/bookingCaregiver',
+              arguments: caregiver,
+            );
           },
           child: const Text(
             'Book This Caregiver',
