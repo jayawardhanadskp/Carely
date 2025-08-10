@@ -1,3 +1,5 @@
+import 'package:carely/features/common/chat_list_screen.dart';
+import 'package:carely/features/common/chat_screen.dart';
 import 'package:carely/features/service_seeker/screens/book_caregiver_screen_ss.dart';
 import 'package:carely/features/service_seeker/screens/booking_details_screen_ss.dart';
 import 'package:carely/features/service_seeker/screens/bookings_screen_ss.dart';
@@ -15,4 +17,6 @@ final Map<String, WidgetBuilder> seekerRoutes = {
   '/seeker/bookingDetails': (context) => BookingDetailsScreenSs(),
   '/seeker/caregiverProView': (context) => CaregiverProfileViewSs(),
   '/seeker/bookingCaregiver': (context) => BookCaregiverScreenSs(),
+  '/seeker/chat': (context) => ChatScreen(),
+  '/seeker/chatList': (context) => ChatListScreen(),
 };
