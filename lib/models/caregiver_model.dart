@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:carely/models/review_model.dart';
+
 class CaregiverProfile {
   final String? id;
   final String role;
@@ -14,6 +16,7 @@ class CaregiverProfile {
   final String? profileImageUrl;
   final DateTime? registrationTimestamp;
   final List<String> bookings;
+  final List<Review>? reviews;
 
   CaregiverProfile({
     this.id,
@@ -28,7 +31,8 @@ class CaregiverProfile {
     required this.bio,
     this.profileImageUrl,
     this.registrationTimestamp,
-    this.bookings = const [], // default empty
+    this.bookings = const [], 
+    this.reviews = const [], 
   });
 
   Map<String, dynamic> toMap() {
@@ -46,6 +50,7 @@ class CaregiverProfile {
       'profileImageUrl': profileImageUrl,
       'registrationTimestamp': registrationTimestamp?.millisecondsSinceEpoch,
       'bookings': bookings,
+      'reviews': reviews,
     };
   }
 
@@ -62,13 +67,11 @@ class CaregiverProfile {
       location: map['location'],
       bio: map['bio'],
       profileImageUrl: map['profileImageUrl'],
-      registrationTimestamp:
-          map['registrationTimestamp'] != null
-              ? DateTime.fromMillisecondsSinceEpoch(
-                map['registrationTimestamp'],
-              )
-              : null,
+      registrationTimestamp: map['registrationTimestamp'] != null
+          ? DateTime.fromMillisecondsSinceEpoch(map['registrationTimestamp'])
+          : null,
       bookings: List<String>.from(map['bookings'] ?? []),
+      reviews: List<Review>.from(map['reviews'] ?? []),
     );
   }
 
