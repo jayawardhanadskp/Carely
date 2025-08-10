@@ -2,6 +2,8 @@ import 'package:carely/firebase_options.dart';
 import 'package:carely/providers/booking_provider.dart';
 import 'package:carely/providers/caregiver_profile_provider.dart';
 import 'package:carely/providers/caregivers_list_provider.dart';
+import 'package:carely/providers/chat_provider.dart';
+import 'package:carely/providers/review_provider.dart';
 import 'package:carely/providers/seeker_profile_provider.dart';
 import 'package:carely/routes/app_routes.dart';
 import 'package:carely/theme/app_theme.dart';
@@ -26,6 +28,8 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => CaregiverProfileProvider()),
         ChangeNotifierProvider(create: (_) => CaregiversListProvider()),
         ChangeNotifierProvider(create: (_) => BookingProvider()),
+        ChangeNotifierProvider(create: (_) => ReviewProvider()),
+        ChangeNotifierProvider(create: (_) => ChatProvider()),
       ],
       child: MaterialApp(
         title: 'Carely',

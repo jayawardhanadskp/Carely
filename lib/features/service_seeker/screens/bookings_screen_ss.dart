@@ -139,6 +139,7 @@ class _BookingsScreenSsState extends State<BookingsScreenSs>
             final caregiver = snapshot.data;
 
             return BookingCardSs(
+              caregiverId: booking.caregiverId,
               imageUrl: caregiver?.profileImageUrl ?? '',
               caregiverName: caregiver?.fullName ?? 'Caregiver',
               caregiverRating: 4.0,

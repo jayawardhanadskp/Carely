@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 enum BookingStatus { confirmed, pending, cancelled }
 
 class BookingCardSs extends StatelessWidget {
+  final String caregiverId;
   final String caregiverName;
   final double caregiverRating;
   final String date;
@@ -15,6 +16,7 @@ class BookingCardSs extends StatelessWidget {
 
   const BookingCardSs({
     super.key,
+    required this.caregiverId,
     required this.caregiverName,
     required this.caregiverRating,
     required this.date,
@@ -82,7 +84,13 @@ class BookingCardSs extends StatelessWidget {
                         Icons.chat_bubble_outline,
                         color: Colors.grey[600],
                       ),
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.pushNamed(
+                context,
+                '/seeker/chat',
+                arguments: caregiverId,
+              );
+                      },
                     ),
                     IconButton(
                       icon: Icon(Icons.close, color: Colors.red),

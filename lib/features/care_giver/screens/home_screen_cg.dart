@@ -25,10 +25,11 @@ class _HomeScreenCgState extends State<HomeScreenCg> {
   List<Review> reviews = [
     Review(
       clientName: 'David Wilson',
+      careGiverId: '',
       reviewText:
           'Emily is absolutely wonderful with my mother. Her patience and expertise make all the difference.',
       rating: 5.0,
-      timeAgo: '3 days ago',
+      timeAgo: DateTime.now(),
     ),
   ];
 
@@ -792,7 +793,7 @@ class _HomeScreenCgState extends State<HomeScreenCg> {
           Text(review.reviewText, style: TextStyle(color: Colors.grey[700])),
           const SizedBox(height: 4),
           Text(
-            review.timeAgo,
+            review.timeAgo.toIso8601String(),
             style: TextStyle(color: Colors.grey[500], fontSize: 12),
           ),
         ],

@@ -11,7 +11,8 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 class HomeScreenSs extends StatefulWidget {
-  const HomeScreenSs({super.key});
+  final Function(int)? onTabSelected;
+  const HomeScreenSs({super.key, this.onTabSelected});
 
   @override
   State<HomeScreenSs> createState() => _HomeScreenSsState();
@@ -415,24 +416,28 @@ class _HomeScreenSsState extends State<HomeScreenSs> {
         'icon': Icons.search,
         'color': Colors.blue.withOpacity(0.1),
         'iconColor': Colors.blue,
+        'router': () => widget.onTabSelected?.call(1),
       },
       {
         'title': 'My Bookings',
         'icon': Icons.calendar_today,
         'color': Colors.purple.withOpacity(0.1),
         'iconColor': Colors.purple,
+        'router': () => widget.onTabSelected?.call(2),
       },
       {
         'title': 'Messages',
         'icon': Icons.chat_bubble_outline,
         'color': Colors.green.withOpacity(0.1),
         'iconColor': Colors.green,
+        'router': () => Navigator.pushNamed(context, '/seeker/chatList'),
       },
       {
         'title': 'Upload Medical info',
         'icon': Icons.description_outlined,
         'color': Colors.amber.withOpacity(0.1),
         'iconColor': Colors.amber[700],
+        'router': () => {},
       },
     ];
 
@@ -450,30 +455,33 @@ class _HomeScreenSsState extends State<HomeScreenSs> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children:
               actions.map((action) {
-                return SizedBox(
-                  width: 80,
-                  child: Column(
-                    children: [
-                      Container(
-                        width: 56,
-                        height: 56,
-                        decoration: BoxDecoration(
-                          color: action['color'],
-                          shape: BoxShape.circle,
+                return GestureDetector(
+                  onTap: action['router'],
+                  child: SizedBox(
+                    width: 80,
+                    child: Column(
+                      children: [
+                        Container(
+                          width: 56,
+                          height: 56,
+                          decoration: BoxDecoration(
+                            color: action['color'],
+                            shape: BoxShape.circle,
+                          ),
+                          child: Icon(
+                            action['icon'],
+                            color: action['iconColor'],
+                            size: 24,
+                          ),
                         ),
-                        child: Icon(
-                          action['icon'],
-                          color: action['iconColor'],
-                          size: 24,
+                        const SizedBox(height: 8),
+                        Text(
+                          action['title'],
+                          textAlign: TextAlign.center,
+                          style: TextStyle(fontSize: 12, color: Colors.grey[800]),
                         ),
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        action['title'],
-                        textAlign: TextAlign.center,
-                        style: TextStyle(fontSize: 12, color: Colors.grey[800]),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 );
               }).toList(),
