@@ -35,7 +35,7 @@ class MyApp extends StatelessWidget {
         title: 'Carely',
         debugShowCheckedModeBanner: false,
         theme: AppTheme.lightTheme,
-        initialRoute: '/', // '/seeker/main',
+        initialRoute: '/', /// '/seeker/main',
         onGenerateRoute: AppRouter.generateRoute,
       ),
     );
