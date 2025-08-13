@@ -52,4 +52,12 @@ class BookingProvider with ChangeNotifier {
     await _firestoreService.addBooking(booking);
     getBookings();
   }
+
+  Future<Booking?> getBookingById(String bookingId) async {
+    final doc = await _firestore.collection('bookings').doc(bookingId).get();
+    if (doc.exists) {
+      return Booking.fromMap(doc.data()!);
+    }
+    return null;
+  }
 }

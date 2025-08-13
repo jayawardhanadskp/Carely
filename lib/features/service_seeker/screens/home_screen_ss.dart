@@ -373,6 +373,10 @@ class _HomeScreenSsState extends State<HomeScreenSs> {
                                       Navigator.pushNamed(
                                         context,
                                         '/seeker/bookingDetails',
+                                        arguments: {
+                                          'booking': booking,
+                                          'caregiver': caregiver,
+                                        },
                                       );
                                     },
                                     child: const Row(

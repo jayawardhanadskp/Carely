@@ -3,7 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:intl/intl.dart'; 
+import 'package:intl/intl.dart';
 import '../../../providers/chat_provider.dart';
 
 class ChatListScreen extends StatelessWidget {
@@ -15,9 +15,7 @@ class ChatListScreen extends StatelessWidget {
     final chatProvider = Provider.of<ChatProvider>(context, listen: false);
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Messages'),
-      ),
+      appBar: AppBar(title: const Text('Messages')),
       body: StreamBuilder<List<Map<String, dynamic>>>(
         stream: chatProvider.getUserChats(userId),
         builder: (context, snapshot) {
@@ -36,10 +34,10 @@ class ChatListScreen extends StatelessWidget {
             itemBuilder: (context, index) {
               final chat = chats[index];
 
-              final List<String> participants =
-                  List<String>.from(chat['participants']);
-              final otherUserId =
-                  participants.firstWhere((id) => id != userId);
+              final List<String> participants = List<String>.from(
+                chat['participants'],
+              );
+              final otherUserId = participants.firstWhere((id) => id != userId);
 
               final lastMessage = chat['lastMessage'];
               final lastTimestamp = chat['lastTimestamp'] as Timestamp?;
@@ -50,10 +48,9 @@ class ChatListScreen extends StatelessWidget {
               return FutureBuilder(
                 future: AuthService().getUserDetails(otherUserId),
                 builder: (context, asyncSnapshot) {
-                  if (asyncSnapshot.connectionState == ConnectionState.waiting) {
-                    return const ListTile(
-                      title: Text('Loading...'),
-                    );
+                  if (asyncSnapshot.connectionState ==
+                      ConnectionState.waiting) {
+                    return const ListTile(title: Text('Loading...'));
                   }
                   if (asyncSnapshot.hasError) {
                     return ListTile(
@@ -62,19 +59,44 @@ class ChatListScreen extends StatelessWidget {
                     );
                   }
                   final userDetails = asyncSnapshot.data;
-                  return ListTile(
-                    title: Text('${userDetails?['fullName'] ?? 'Unknown User'}'), 
-                    subtitle: Text(lastMessage),
-                    trailing: Text(formattedTime),
-                    onTap: () {
-                      Navigator.pushNamed(
-                        context,
-                        '/seeker/chat',
-                        arguments: otherUserId,
-                      );
-                    },
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 5),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(16),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.1),
+                            blurRadius: 10,
+                            spreadRadius: 0,
+                            offset: Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: ListTile(
+                        leading: CircleAvatar(
+                          backgroundImage: userDetails?['profileImageUrl'] != null
+                              ? NetworkImage(userDetails!['profileImageUrl'])
+                              : const AssetImage('assets/default_user.png')
+                                  as ImageProvider,
+                        ),
+                        title: Text(
+                          '${userDetails?['fullName'] ?? 'Unknown User'}',
+                        ),
+                        subtitle: Text(lastMessage),
+                        trailing: Text(formattedTime),
+                        onTap: () {
+                          Navigator.pushNamed(
+                            context,
+                            '/seeker/chat',
+                            arguments: otherUserId,
+                          );
+                        },
+                      ),
+                    ),
                   );
-                }
+                },
               );
             },
           );

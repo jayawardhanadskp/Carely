@@ -1,12 +1,41 @@
 // ignore_for_file: deprecated_member_use
 
+import 'package:carely/models/booking_model.dart';
+import 'package:carely/providers/booking_provider.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
-class BookingDetailsScreenSs extends StatelessWidget {
+class BookingDetailsScreenSs extends StatefulWidget {
   const BookingDetailsScreenSs({super.key});
 
   @override
+  State<BookingDetailsScreenSs> createState() => _BookingDetailsScreenSsState();
+}
+
+class _BookingDetailsScreenSsState extends State<BookingDetailsScreenSs> {
+  String formatBookingDate(dynamic dateValue) {
+    if (dateValue is Timestamp) {
+      return DateFormat('MMMM dd, yyyy').format(dateValue.toDate());
+    } else if (dateValue is String) {
+      try {
+        return DateFormat('MMMM dd, yyyy').format(DateTime.parse(dateValue));
+      } catch (e) {
+        return 'Invalid Date';
+      }
+    } else if (dateValue is DateTime) {
+      return DateFormat('MMMM dd, yyyy').format(dateValue);
+    }
+    return 'Unknown Date';
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final args = ModalRoute.of(context)!.settings.arguments as Map;
+
+    final booking = args['booking'];
+    final caregiver = args['caregiver'];
+
     return Scaffold(
       appBar: AppBar(centerTitle: true, title: const Text('Booking Details')),
       body: SingleChildScrollView(
@@ -42,8 +71,8 @@ class BookingDetailsScreenSs extends StatelessWidget {
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
                                 image: DecorationImage(
-                                  image: AssetImage(
-                                    'assets/images/caregiver.jpg',
+                                  image: NetworkImage(
+                                    caregiver.profileImageUrl,
                                   ),
                                   fit: BoxFit.cover,
                                 ),
@@ -82,8 +111,8 @@ class BookingDetailsScreenSs extends StatelessWidget {
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
                                 children: [
-                                  const Text(
-                                    'Emma Johnson',
+                                  Text(
+                                    caregiver.fullName,
                                     style: TextStyle(
                                       fontSize: 18,
                                       fontWeight: FontWeight.bold,
@@ -104,13 +133,6 @@ class BookingDetailsScreenSs extends StatelessWidget {
                                     size: 16,
                                   ),
                                   const SizedBox(width: 4),
-                                  Text(
-                                    '4.8 (127 reviews)',
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      color: Colors.grey[600],
-                                    ),
-                                  ),
                                 ],
                               ),
                             ],
@@ -123,7 +145,7 @@ class BookingDetailsScreenSs extends StatelessWidget {
                     Wrap(
                       spacing: 8,
                       children: [
-                        _buildServiceChip('Elder Care', Colors.blue),
+                        _buildServiceChip(caregiver.bio, Colors.blue),
                         _buildServiceChip('Medication Management', Colors.blue),
                         _buildServiceChip('Physical Assistance', Colors.blue),
                       ],
@@ -153,14 +175,11 @@ class BookingDetailsScreenSs extends StatelessWidget {
                 ),
                 child: Column(
                   children: [
-                    _buildInfoRow(Icons.calendar_today, 'Today'),
+                    _buildInfoRow(Icons.calendar_today, formatBookingDate(booking['date'])),
                     const SizedBox(height: 16),
-                    _buildInfoRow(Icons.access_time, '2:00 PM - 5:00 PM'),
-                    const SizedBox(height: 16),
-                    _buildInfoRow(
-                      Icons.location_on,
-                      '123 Home Street, City, State',
-                    ),
+                    _buildInfoRow(Icons.access_time, booking['time'] ?? '10:00 AM - 1:00 PM'),
+                    
+                    
                     const SizedBox(height: 16),
                     Row(
                       children: [
