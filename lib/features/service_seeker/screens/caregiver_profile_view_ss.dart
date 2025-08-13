@@ -47,7 +47,7 @@ class _CaregiverProfileViewSsState extends State<CaregiverProfileViewSs> {
         title: const Text('Caregiver Profile'),
         actions: [
           IconButton(
-            icon: Icon(Icons.favorite_border, color: Colors.grey[400]),
+            icon: Icon(Icons.chat_outlined, color: Colors.green,),
             onPressed: () {
               Navigator.pushNamed(
                 context,

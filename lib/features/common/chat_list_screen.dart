@@ -1,3 +1,4 @@
+import 'package:carely/services/auth_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -46,17 +47,34 @@ class ChatListScreen extends StatelessWidget {
                   ? DateFormat('MMM d, h:mm a').format(lastTimestamp.toDate())
                   : '';
 
-              return ListTile(
-                title: Text('User: $otherUserId'), 
-                subtitle: Text(lastMessage),
-                trailing: Text(formattedTime),
-                onTap: () {
-                  Navigator.pushNamed(
-                    context,
-                    '/seeker/chat',
-                    arguments: otherUserId,
+              return FutureBuilder(
+                future: AuthService().getUserDetails(otherUserId),
+                builder: (context, asyncSnapshot) {
+                  if (asyncSnapshot.connectionState == ConnectionState.waiting) {
+                    return const ListTile(
+                      title: Text('Loading...'),
+                    );
+                  }
+                  if (asyncSnapshot.hasError) {
+                    return ListTile(
+                      title: Text('Error loading user'),
+                      subtitle: Text(asyncSnapshot.error.toString()),
+                    );
+                  }
+                  final userDetails = asyncSnapshot.data;
+                  return ListTile(
+                    title: Text('${userDetails?['fullName'] ?? 'Unknown User'}'), 
+                    subtitle: Text(lastMessage),
+                    trailing: Text(formattedTime),
+                    onTap: () {
+                      Navigator.pushNamed(
+                        context,
+                        '/seeker/chat',
+                        arguments: otherUserId,
+                      );
+                    },
                   );
-                },
+                }
               );
             },
           );

@@ -3,14 +3,17 @@
 import 'package:carely/models/booking_model.dart';
 import 'package:carely/models/review_model.dart';
 import 'package:carely/providers/caregiver_profile_provider.dart';
+import 'package:carely/providers/review_provider.dart';
 import 'package:carely/providers/seeker_profile_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class HomeScreenCg extends StatefulWidget {
-  const HomeScreenCg({super.key});
+  final Function(int)? onTabSelected;
+  const HomeScreenCg({super.key, this.onTabSelected});
 
   @override
   State<HomeScreenCg> createState() => _HomeScreenCgState();
@@ -44,6 +47,10 @@ class _HomeScreenCgState extends State<HomeScreenCg> {
         listen: false,
       ).fetchCaregiverProfile();
       _fetchBookings();
+      Provider.of<ReviewProvider>(
+        context,
+        listen: false,
+      ).getAllReviews(_auth.currentUser?.uid ?? '');
     });
   }
 
@@ -56,20 +63,18 @@ class _HomeScreenCgState extends State<HomeScreenCg> {
       final userId = _auth.currentUser?.uid;
       if (userId != null) {
         // Fetch confirmed bookings
-        final confirmedSnapshot =
-            await _firestore
-                .collection('bookings')
-                .where('caregiverId', isEqualTo: userId)
-                .where('status', isEqualTo: 'confirmed')
-                .get();
+        final confirmedSnapshot = await _firestore
+            .collection('bookings')
+            .where('caregiverId', isEqualTo: userId)
+            .where('status', isEqualTo: 'confirmed')
+            .get();
 
         // Fetch pending bookings
-        final pendingSnapshot =
-            await _firestore
-                .collection('bookings')
-                .where('caregiverId', isEqualTo: userId)
-                .where('status', isEqualTo: 'pending')
-                .get();
+        final pendingSnapshot = await _firestore
+            .collection('bookings')
+            .where('caregiverId', isEqualTo: userId)
+            .where('status', isEqualTo: 'pending')
+            .get();
 
         final confirmed = await _processBookings(confirmedSnapshot);
         final pending = await _processBookings(pendingSnapshot);
@@ -197,189 +202,214 @@ class _HomeScreenCgState extends State<HomeScreenCg> {
           ),
         ],
       ),
-      body:
-          _isLoading
-              ? Center(child: CircularProgressIndicator())
-              : SingleChildScrollView(
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Quick menu
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          _buildQuickMenuItem(
-                            context,
-                            Icons.calendar_today_outlined,
-                            'My Schedule',
-                            () {
-                              Navigator.pushNamed(context, '/schedule');
-                            },
-                            Colors.blue,
-                          ),
-                          _buildQuickMenuItem(
-                            context,
-                            Icons.person_outline,
-                            'Edit Profile',
-                            () {},
-                            Colors.blue,
-                          ),
-                          _buildQuickMenuItem(
-                            context,
-                            Icons.message_outlined,
-                            'Messages',
-                            () {},
-                            Colors.blue,
-                          ),
-                          _buildQuickMenuItem(
-                            context,
-                            Icons.star_outline,
-                            'My Reviews',
-                            () {},
-                            Colors.blue,
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 24),
+      body: _isLoading
+          ? Center(child: CircularProgressIndicator())
+          : SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Quick menu
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        _buildQuickMenuItem(
+                          context,
+                          Icons.calendar_today_outlined,
+                          'My Schedule',
+                          () {
+                            widget.onTabSelected?.call(1);
+                          },
+                          Colors.blue,
+                        ),
+                        _buildQuickMenuItem(
+                          context,
+                          Icons.person_outline,
+                          'My Profile',
+                          () {
+                            widget.onTabSelected?.call(3);
+                          },
+                          Colors.blue,
+                        ),
+                        _buildQuickMenuItem(
+                          context,
+                          Icons.message_outlined,
+                          'Messages',
+                          () {
+                            widget.onTabSelected?.call(2);
+                          },
+                          Colors.blue,
+                        ),
+                        _buildQuickMenuItem(
+                          context,
+                          Icons.star_outline,
+                          'My Reviews',
+                          () {
+                            Navigator.pushNamed(
+                              context,
+                              '/caregiver/allReviews',
+                            );
+                          },
+                          Colors.blue,
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 24),
 
-                      // My Bookings
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          const Text(
-                            'My Bookings',
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
+                    // My Bookings
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text(
+                          'My Bookings',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
                           ),
-                          TextButton(
-                            onPressed: () {
-                              Navigator.pushNamed(context, '/bookings');
-                            },
-                            child: Row(
-                              children: [
-                                const Text(
-                                  'View all',
-                                  style: TextStyle(color: Colors.blue),
-                                ),
-                                const SizedBox(width: 4),
-                                Icon(
-                                  Icons.arrow_forward_ios,
-                                  size: 12,
-                                  color: Colors.blue,
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                      upcomingBookings.isEmpty
-                          ? _buildEmptyState('No upcoming bookings')
-                          : Column(
-                            children:
-                                upcomingBookings
-                                    .map(
-                                      (booking) =>
-                                          _buildBookingCard(context, booking),
-                                    )
-                                    .toList(),
-                          ),
-                      const SizedBox(height: 24),
-
-                      // Pending Requests
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          const Text(
-                            'Pending Requests',
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          if (pendingRequests.isNotEmpty)
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 8,
-                                vertical: 4,
-                              ),
-                              decoration: BoxDecoration(
-                                color: Colors.blue.shade50,
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: Text(
-                                '${pendingRequests.length}',
-                                style: const TextStyle(
-                                  color: Colors.blue,
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                            ),
-                        ],
-                      ),
-                      const SizedBox(height: 12),
-                      pendingRequests.isEmpty
-                          ? _buildEmptyState('No pending requests')
-                          : Column(
-                            children:
-                                pendingRequests
-                                    .map(
-                                      (request) => _buildPendingRequestCard(
-                                        context,
-                                        request,
-                                      ),
-                                    )
-                                    .toList(),
-                          ),
-                      const SizedBox(height: 24),
-
-                      // Recent Reviews
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          const Text(
-                            'Recent Reviews',
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          Row(
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            widget.onTabSelected?.call(1);
+                          },
+                          child: Row(
                             children: [
-                              const Icon(
-                                Icons.star,
-                                color: Colors.amber,
-                                size: 18,
+                              const Text(
+                                'View all',
+                                style: TextStyle(color: Colors.blue),
                               ),
                               const SizedBox(width: 4),
-                              const Text(
-                                '4.9',
-                                style: TextStyle(fontWeight: FontWeight.bold),
+                              Icon(
+                                Icons.arrow_forward_ios,
+                                size: 12,
+                                color: Colors.blue,
                               ),
                             ],
                           ),
-                        ],
-                      ),
-                      const SizedBox(height: 12),
-                      reviews.isEmpty
-                          ? _buildEmptyState('No reviews yet')
-                          : Column(
-                            children:
-                                reviews
-                                    .map(
-                                      (review) =>
-                                          _buildReviewCard(context, review),
-                                    )
-                                    .toList(),
+                        ),
+                      ],
+                    ),
+                    upcomingBookings.isEmpty
+                        ? _buildEmptyState('No upcoming bookings')
+                        : Column(
+                            children: upcomingBookings
+                                .map(
+                                  (booking) =>
+                                      _buildBookingCard(context, booking),
+                                )
+                                .toList(),
                           ),
-                    ],
-                  ),
+                    const SizedBox(height: 24),
+
+                    // Pending Requests
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text(
+                          'Pending Requests',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        if (pendingRequests.isNotEmpty)
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 4,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.blue.shade50,
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Text(
+                              '${pendingRequests.length}',
+                              style: const TextStyle(
+                                color: Colors.blue,
+                                fontSize: 12,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                    pendingRequests.isEmpty
+                        ? _buildEmptyState('No pending requests')
+                        : Column(
+                            children: pendingRequests
+                                .map(
+                                  (request) => _buildPendingRequestCard(
+                                    context,
+                                    request,
+                                  ),
+                                )
+                                .toList(),
+                          ),
+                    const SizedBox(height: 24),
+
+                    // Recent Reviews
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text(
+                          'Recent Reviews',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Row(
+                          children: [
+                            const Icon(
+                              Icons.star,
+                              color: Colors.amber,
+                              size: 18,
+                            ),
+                            const SizedBox(width: 4),
+                            const Text(
+                              '4.9',
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                    Consumer<ReviewProvider>(
+                      builder: (context, reviews, _) {
+                        if (reviews.isLoading) {
+                          return Center(child: CircularProgressIndicator());
+                        }
+
+                        if (reviews.review.isEmpty) {
+                          return _buildEmptyState('No reviews yet');
+                        }
+
+                        return Column(
+                          children: reviews.review
+                              .map(
+                                (review) => _buildReviewCard(context, review),
+                              )
+                              .toList(),
+                        );
+                      },
+                    ),
+                    // reviews.isEmpty
+                    //     ? _buildEmptyState('No reviews yet')
+                    //     : Column(
+                    //       children:
+                    //           reviews
+                    //               .map(
+                    //                 (review) =>
+                    //                     _buildReviewCard(context, review),
+                    //               )
+                    //               .toList(),
+                    //     ),
+                  ],
                 ),
               ),
+            ),
     );
   }
 
@@ -526,14 +556,12 @@ class _HomeScreenCgState extends State<HomeScreenCg> {
                   const SizedBox(width: 8),
                   Expanded(
                     child: FutureBuilder<DocumentSnapshot>(
-                      future:
-                          _firestore
-                              .collection('addresses')
-                              .doc(booking.seekerId)
-                              .get(),
+                      future: _firestore
+                          .collection('addresses')
+                          .doc(booking.seekerId)
+                          .get(),
                       builder: (context, snapshot) {
-                        if (snapshot.hasData && snapshot.data!.exists) {
-                        }
+                        if (snapshot.hasData && snapshot.data!.exists) {}
                         return Text(
                           clientAddress,
                           style: TextStyle(color: Colors.grey[700]),
@@ -547,7 +575,13 @@ class _HomeScreenCgState extends State<HomeScreenCg> {
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.pushNamed(
+                  context,
+                  '/caregiver/bookingDetails',
+                  arguments: {'seekerId': booking.seekerId, 'booking': booking},
+                );
+                  },
                   style: ElevatedButton.styleFrom(
                     foregroundColor: Colors.blue,
                     backgroundColor: Colors.blue.withOpacity(0.1),
@@ -666,14 +700,12 @@ class _HomeScreenCgState extends State<HomeScreenCg> {
                   const SizedBox(width: 8),
                   Expanded(
                     child: FutureBuilder<DocumentSnapshot>(
-                      future:
-                          _firestore
-                              .collection('addresses')
-                              .doc(request.seekerId)
-                              .get(),
+                      future: _firestore
+                          .collection('addresses')
+                          .doc(request.seekerId)
+                          .get(),
                       builder: (context, snapshot) {
-                        if (snapshot.hasData && snapshot.data!.exists) {
-                        }
+                        if (snapshot.hasData && snapshot.data!.exists) {}
                         return Text(
                           clientAddress,
                           style: TextStyle(color: Colors.grey[700]),
@@ -793,7 +825,7 @@ class _HomeScreenCgState extends State<HomeScreenCg> {
           Text(review.reviewText, style: TextStyle(color: Colors.grey[700])),
           const SizedBox(height: 4),
           Text(
-            review.timeAgo.toIso8601String(),
+            DateFormat('dd MMM yyyy').format(review.timeAgo),
             style: TextStyle(color: Colors.grey[500], fontSize: 12),
           ),
         ],

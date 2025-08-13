@@ -1,3 +1,4 @@
+import 'package:carely/features/care_giver/screens/all_reviews.dart';
 import 'package:carely/features/care_giver/screens/home_screen_cg.dart';
 import 'package:carely/features/care_giver/screens/profile_screen_cg.dart';
 import 'package:carely/features/care_giver/screens/schedule_details_screen_cg.dart';
@@ -12,4 +13,5 @@ final Map<String, WidgetBuilder> caregiverRoutes = {
   '/caregiver/home': (context) =>  HomeScreenCg(),
   '/caregiver/profile': (context) => ProfileScreenCg(),
   '/caregiver/bookingDetails': (context) => ScheduleDetailsScreenCg(),
+  '/caregiver/allReviews': (context) => AllReviews(),
 };

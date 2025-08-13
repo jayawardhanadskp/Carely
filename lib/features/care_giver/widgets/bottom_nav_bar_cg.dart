@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
-class BottomNavBarSs extends StatelessWidget {
+class BottomNavBarCg extends StatelessWidget {
   final int currentIndex;
   final Function(int) onTap;
 
-  const BottomNavBarSs({
+  const BottomNavBarCg({
     super.key,
     required this.currentIndex,
     required this.onTap,
@@ -32,9 +32,9 @@ class BottomNavBarSs extends StatelessWidget {
           label: 'Bookings',
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.chat_bubble_outline),
-          activeIcon: Icon(Icons.chat_bubble),
-          label: 'Chat',
+          icon: Icon(Icons.list_alt_sharp),
+          activeIcon: Icon(Icons.list_alt),
+          label: 'Messages',
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.person_outline),
