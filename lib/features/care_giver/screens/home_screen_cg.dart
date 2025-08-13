@@ -145,7 +145,7 @@ class _HomeScreenCgState extends State<HomeScreenCg> {
             return Row(
               children: [
                 CircleAvatar(
-                  backgroundImage: NetworkImage(profile?.profileImageUrl ?? ''),
+                  backgroundImage: NetworkImage(profile?.profileImageUrl ?? 'assets/default_user.png'),
                   radius: 18,
                 ),
                 const SizedBox(width: 12),
