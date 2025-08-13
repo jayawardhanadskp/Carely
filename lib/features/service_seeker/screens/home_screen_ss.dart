@@ -416,14 +416,14 @@ class _HomeScreenSsState extends State<HomeScreenSs> {
         'icon': Icons.search,
         'color': Colors.blue.withOpacity(0.1),
         'iconColor': Colors.blue,
-        'router': () => widget.onTabSelected?.call(1),
+        'router': () => widget.onTabSelected?.call(2),
       },
       {
         'title': 'My Bookings',
         'icon': Icons.calendar_today,
         'color': Colors.purple.withOpacity(0.1),
         'iconColor': Colors.purple,
-        'router': () => widget.onTabSelected?.call(2),
+        'router': () => widget.onTabSelected?.call(1),
       },
       {
         'title': 'Messages',
