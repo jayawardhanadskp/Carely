@@ -118,4 +118,25 @@ class AuthService {
     await docRef.set(profile.toMap());
     await docRef.update({'uid': docRef.id});
   }
+
+
+  /// check seeker or giver and get details form id
+  Future<Map<String, dynamic>?> getUserDetails(String userId) async {
+    try {
+      final seekerDoc = await _firestore.collection('seekers').doc(userId).get();
+      if (seekerDoc.exists) {
+        return seekerDoc.data();
+      }
+
+      final caregiverDoc =
+          await _firestore.collection('caregivers').doc(userId).get();
+      if (caregiverDoc.exists) {
+        return caregiverDoc.data();
+      }
+
+      return null; 
+    } catch (e) {
+      throw e;
+    }
+  }
 }
