@@ -2,6 +2,7 @@
 
 import 'package:carely/models/booking_model.dart';
 import 'package:carely/providers/seeker_profile_provider.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -30,6 +31,22 @@ class _ScheduleDetailsScreenCgState extends State<ScheduleDetailsScreenCg> {
         listen: false,
       ).fetchSeekerProfileById(seekerId);
     });
+  }
+
+  Future<void> _updateBookingStatus(String bookingId, String newStatus) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection('bookings')
+          .doc(bookingId)
+          .update({'status': newStatus});
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Booking status updated to "$newStatus"')),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Failed to update status: $e')));
+    }
   }
 
   @override
@@ -228,7 +245,9 @@ class _ScheduleDetailsScreenCgState extends State<ScheduleDetailsScreenCg> {
                   const SizedBox(height: 12),
 
                   ElevatedButton.icon(
-                    onPressed: () {},
+                    onPressed: () async {
+                      await _updateBookingStatus(booking.id ?? '', 'completed');
+                    },
                     icon: const Icon(Icons.check_circle_outline),
                     label: const Text('Mark as Complete'),
                     style: ElevatedButton.styleFrom(
