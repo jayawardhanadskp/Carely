@@ -1,8 +1,8 @@
+import 'package:carely/features/care_giver/widgets/bottom_nav_bar_cg.dart';
 import 'package:carely/features/service_seeker/screens/all_caregivers_ss.dart';
 import 'package:carely/features/service_seeker/screens/bookings_screen_ss.dart';
 import 'package:carely/features/service_seeker/screens/home_screen_ss.dart';
 import 'package:carely/features/service_seeker/screens/profile_scree_ss.dart';
-import 'package:carely/features/service_seeker/widgets/bottom_nav_bar_cg.dart';
 import 'package:carely/features/service_seeker/widgets/bottom_nav_bar_ss.dart';
 import 'package:flutter/material.dart';
 
@@ -38,7 +38,7 @@ class MainScreenSsState extends State<MainScreenSs> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: _screens[_currentIndex],
-      bottomNavigationBar: BottomNavBarCg(
+      bottomNavigationBar: BottomNavBarSs(
         currentIndex: _currentIndex,
         onTap: _onTabTapped,
       ),
