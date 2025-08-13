@@ -70,7 +70,7 @@ class _CaregiverProfileViewSsState extends State<CaregiverProfileViewSs> {
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   image: DecorationImage(
-                    image: NetworkImage(caregiver.profileImageUrl ?? ''),
+                    image: NetworkImage(caregiver.profileImageUrl ?? 'assets/default_user.png'),
                     fit: BoxFit.cover,
                   ),
                 ),
@@ -509,7 +509,7 @@ class _CaregiverProfileViewSsState extends State<CaregiverProfileViewSs> {
                   ],
                 ),
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: 80),
             ],
           ),
         ),
