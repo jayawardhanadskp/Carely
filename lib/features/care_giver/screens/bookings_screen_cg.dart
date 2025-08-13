@@ -17,6 +17,7 @@ class BookingsScreenCg extends StatefulWidget {
 class _BookingsScreenCgState extends State<BookingsScreenCg> {
   int _selectedTabIndex = 0;
   final List<String> _tabs = ['Upcoming', 'Pending', 'Completed'];
+  
 
   Future<void> _updateBookingStatus(String bookingId, String newStatus) async {
     try {
@@ -38,11 +39,13 @@ class _BookingsScreenCgState extends State<BookingsScreenCg> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
+        
         title: const Text('My Bookings'),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.pop(context),
-        ),
+        // leading: IconButton(
+        //   icon: const Icon(Icons.arrow_back),
+        //   onPressed: () => Navigator.pop(context),
+        // ),
       ),
       body: Column(
         children: [
@@ -564,23 +567,7 @@ class _BookingsScreenCgState extends State<BookingsScreenCg> {
                       ],
                     ),
                     const SizedBox(height: 8),
-                    Row(
-                      children: [
-                        const Icon(
-                          Icons.calendar_today,
-                          size: 14,
-                          color: Colors.grey,
-                        ),
-                        const SizedBox(width: 4),
-                        Text(
-                          'DateTime.parse(booking.date)',
-                          style: TextStyle(
-                            color: Colors.grey[700],
-                            fontSize: 14,
-                          ),
-                        ),
-                      ],
-                    ),
+                    
                     const SizedBox(height: 4),
                     Row(
                       children: [
@@ -744,7 +731,7 @@ class _BookingsScreenCgState extends State<BookingsScreenCg> {
                   date: booking.date,
                   time: booking.time,
                   address: address,
-                  statusLabel: 'Completed',
+                  statusLabel: 'completed',
                   statusColor: Colors.grey,
                 );
               },
