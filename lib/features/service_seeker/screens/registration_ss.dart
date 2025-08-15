@@ -51,6 +51,19 @@ class _RegistrationSsState extends State<RegistrationSs> {
 
       try {
 
+        final userCredential = await _authService.createUserWithEmailAndPassword(
+          _emailController.text.trim(),
+          _passwordController.text.trim(),
+        );
+        if (userCredential == null) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Failed to create account.')),
+          );
+          return;
+        }
+        final user = userCredential.user;
+        
+
         String? profileImageUrl;
         if (_profileImage != null) {
           profileImageUrl = await _authService.uploadSeekerProfileImage(

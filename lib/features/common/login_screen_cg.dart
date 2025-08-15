@@ -195,11 +195,7 @@ class _LoginScreenState extends State<LoginScreen> {
     
     const Color darkGrey = Color(0xFF6B7280);
     return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        automaticallyImplyLeading: false,
-        title: const Text('Caregiver Login'),
-      ),
+      
       body: SingleChildScrollView(
         child: Form(
           key: _formKey,
@@ -207,6 +203,7 @@ class _LoginScreenState extends State<LoginScreen> {
             padding: const EdgeInsets.all(10.0),
             child: Column(
               children: <Widget>[
+                const SizedBox(height: 100),
                 SvgPicture.asset('assets/svg/logo.svg', height: 80, width: 80),
             const SizedBox(height: 16),
             // Carely Text
